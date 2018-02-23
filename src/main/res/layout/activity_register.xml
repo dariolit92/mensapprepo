@@ -1,0 +1,262 @@
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:facebook="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/id"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/red"
+    android:orientation="vertical"
+    android:weightSum="1"
+    tools:context=".MainActivity">
+
+    <TextView
+        android:id="@+id/titolo"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginTop="5dp"
+        android:text="Registrazione"
+        android:textSize="25dp" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Email:"
+            android:textSize="20dp"
+            android:layout_alignParentBottom="true"
+            android:id="@+id/textView"
+            android:layout_alignTop="@+id/email" />
+
+        <EditText
+            android:id="@+id/email"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="10dp"
+            android:inputType="textEmailAddress"
+            android:maxLength="30"
+            android:layout_toEndOf="@+id/textView" />
+    </RelativeLayout>
+
+    <View style="@style/Divider" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Password:"
+            android:textSize="20dp"
+            android:layout_alignParentBottom="true"
+            android:id="@+id/textView2"
+            android:layout_alignTop="@+id/password" />
+
+        <EditText
+            android:id="@+id/password"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="10dp"
+            android:maxLength="30"
+            android:inputType="textPassword"
+android:hint="min 8 caratteri max 16"
+            android:layout_toEndOf="@+id/textView2" />
+    </RelativeLayout>
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Conferma \n Password:"
+            android:textSize="17dp"
+            android:layout_alignParentBottom="true"
+            android:id="@+id/textView9"
+            android:layout_alignTop="@+id/confirmpassword" />
+
+        <EditText
+            android:id="@+id/confirmpassword"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="10dp"
+            android:maxLength="30"
+            android:inputType="textPassword"
+            android:hint="min 8 caratteri max 16"
+            android:layout_toEndOf="@+id/textView9" />
+    </RelativeLayout>
+
+    <View style="@style/Divider" />
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="CodiceFiscale:"
+            android:textSize="17dp"
+            android:layout_alignParentBottom="true"
+            android:id="@+id/textView3"
+            android:layout_alignTop="@+id/codicefiscale" />
+
+        <EditText
+            android:id="@+id/codicefiscale"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="10dp"
+            android:maxLength="30"
+            android:inputType="textPersonName"
+            android:hint="esattamente 16 caratteri"
+            android:layout_toEndOf="@+id/textView3" />
+    </RelativeLayout>
+
+    <View style="@style/Divider" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="47dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Fascia Isee:"
+            android:textSize="20dp"
+            android:layout_alignParentBottom="true"
+            android:id="@+id/textView4"
+            android:layout_alignTop="@+id/fasciaisee" />
+
+        <Spinner
+            android:id="@+id/fasciaisee"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="10dp"
+            android:layout_toEndOf="@+id/textView4" />
+    </RelativeLayout>
+
+    <View style="@style/Divider" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="55dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Città di Residenza:"
+            android:textSize="20dp"
+            android:layout_alignParentBottom="true"
+            android:id="@+id/textView5"
+            android:layout_alignTop="@+id/citta" />
+
+        <EditText
+            android:id="@+id/citta"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="10dp"
+            android:maxLength="30"
+            android:inputType="textPersonName"
+            android:layout_toEndOf="@+id/textView5" />
+    </RelativeLayout>
+
+    <View style="@style/Divider" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="47dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Università:"
+            android:textSize="20dp"
+            android:layout_alignParentBottom="true"
+            android:id="@+id/textView6"
+            android:layout_alignTop="@+id/universita" />
+
+        <Spinner
+            android:id="@+id/universita"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="10dp"
+            android:layout_toEndOf="@+id/textView6" />
+    </RelativeLayout>
+
+    <View style="@style/Divider" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="47dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Facoltà:"
+            android:textSize="20dp"
+            android:layout_alignParentBottom="true"
+            android:id="@+id/textView7"
+            android:layout_alignTop="@+id/facolta" />
+
+        <EditText
+            android:id="@+id/facolta"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="10dp"
+            android:maxLength="30"
+            android:inputType="textPersonName"
+            android:layout_toEndOf="@+id/textView7" />
+    </RelativeLayout>
+
+    <View style="@style/Divider" />
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="47dp"
+        android:orientation="horizontal">
+
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Dipartimento:"
+            android:textSize="20dp"
+            android:layout_alignParentBottom="true"
+            android:id="@+id/textView8"
+            android:layout_alignTop="@+id/dipartimento" />
+
+        <EditText
+            android:id="@+id/dipartimento"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_marginLeft="10dp"
+            android:maxLength="30"
+            android:inputType="textPersonName"
+            android:layout_toEndOf="@+id/textView8" />
+    </RelativeLayout>
+
+    <View style="@style/Divider" />
+    <ImageButton
+        android:id="@+id/registrazione"
+        android:layout_width="219dp"
+        android:layout_height="40dp"
+        android:layout_gravity="center"
+        android:layout_marginTop="10dp"
+        android:background="@drawable/registrazione"/>
+
+
+</LinearLayout>

@@ -1,0 +1,47 @@
+<resources>
+    <string name="app_name">MensApp</string>
+    <string name="facebook_app_id">213051359232873</string>
+    <string name="fb_login_protocol_scheme">fb213051359232873</string>
+    <string-array name="array_fasce">
+        <item>prima</item>
+        <item>seconda</item>
+        <item>terza</item>
+        <item>quarta</item>
+        <item>quinta</item>
+        <item>no fascia(importo completo)</item>
+    </string-array>
+    <string-array name="array_universita">
+        <item>La Sapienza</item>
+        <item>Tor Vergata</item>
+        <item>Roma Tre</item>
+    </string-array>
+
+
+
+    <!-- Nav Drawer List Item Icons -->
+    <!-- Keep them in order as the titles are in -->
+    <array name="nav_drawer_icons">
+        <item>@drawable/ic_home</item>
+        <item>@drawable/ic_mensa</item>
+        <item>@drawable/ic_esci</item>
+    </array>
+
+    <!-- Nav Drawer Menu Items -->
+    <string-array name="nav_drawer_items">
+        <item>Home</item>
+        <item>Mense</item>
+        <item>Logout</item>
+    </string-array>
+
+    <!-- Content Description -->
+    <string name="desc_list_item_icon">Item Icon</string>
+
+    <string-array name="tipopasto">
+    <item>Pranzo</item>
+        <item>Cena</item>
+
+    </string-array>
+    <string-array name="vuoto">
+        <item>[Mensa…]</item>
+    </string-array>
+</resources>
