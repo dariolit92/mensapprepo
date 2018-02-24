@@ -9,13 +9,18 @@ import android.content.Context;
 import android.content.SharedPreferences;
 
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 public final class UserSession {
     private static final String PREFER_NAME = "SessionManager";
     private static final String USER = "user";
     private static final String SESSION = "session";
-
+private static List<Piatto> primiPiatti;
+    private static List<Piatto> secondiPiatti;
+    private static List<Piatto> contorni;
+    private static List<Piatto> dessert;
+    private static List<Piatto> piattiOrdinati;
 
     private static String codiceFiscaleUtente;
     private static String sessionID;
@@ -30,9 +35,49 @@ public final class UserSession {
         sessionID = session;
     }
 
+    public static List<Piatto> getPrimiPiatti() {
+        return primiPiatti;
+    }
+
+    public static List<Piatto> getSecondiPiatti() {
+        return secondiPiatti;
+    }
+
+    public static List<Piatto> getContorni() {
+        return contorni;
+    }
+
+    public static List<Piatto> getDessert() {
+        return dessert;
+    }
+
+    public static List<Piatto> getPiattiOrdinati() {
+        return piattiOrdinati;
+    }
+
+    public static void setPiattiOrdinati(List<Piatto> piattiOrdinati) {
+        UserSession.piattiOrdinati = piattiOrdinati;
+    }
+
+    public static void setPrimiPiatti(List<Piatto> primiPiatti) {
+        UserSession.primiPiatti = primiPiatti;
+    }
+
+    public static void setSecondiPiatti(List<Piatto> secondiPiatti) {
+        UserSession.secondiPiatti = secondiPiatti;
+    }
+
+    public static void setContorni(List<Piatto> contorni) {
+        UserSession.contorni = contorni;
+    }
+
+    public static void setDessert(List<Piatto> dessert) {
+        UserSession.dessert = dessert;
+    }
+
     /*
-     * Il metodo isActiveSession verifica se c'è un'istanza di sessione nella memoria persistente.
-     */
+             * Il metodo isActiveSession verifica se c'è un'istanza di sessione nella memoria persistente.
+             */
     public static boolean isActiveSession(Context c) {
         if (codiceFiscaleUtente != null && sessionID != null ) return true;
         SharedPreferences pref = c.getSharedPreferences(PREFER_NAME, Context.MODE_PRIVATE);
@@ -47,7 +92,7 @@ public final class UserSession {
     public static void setSession(Context c, String user, String session) {
         if (codiceFiscaleUtente != null || sessionID != null  || user == null || session == null ) return;
 
-        new UserSession(codiceFiscaleUtente, session);
+        new UserSession(user, session);
         SharedPreferences.Editor editor = c.getSharedPreferences(PREFER_NAME, Context.MODE_PRIVATE).edit();
         editor.putString(USER, user);
         editor.putString(SESSION, session);

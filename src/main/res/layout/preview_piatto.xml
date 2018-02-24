@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:orientation="horizontal"
+    android:paddingBottom="5dp"
+    android:paddingTop="5dp">
+
+
+
+    <ImageView
+        android:id="@+id/immaginePiattoView"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:visibility="invisible"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentEnd="true"
+        android:layout_marginEnd="28dp" />
+
+    <TextView
+        android:id="@+id/nomePiattoView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_marginLeft="@dimen/activity_horizontal_margin"
+        android:text="Nome"
+        android:textColor="@color/black"
+        android:textSize="@dimen/preview_dog_field_size"
+        android:layout_marginStart="53dp"
+        android:layout_centerVertical="true"
+        android:layout_toEndOf="@+id/tipoPiattoView" />
+
+    <TextView
+        android:id="@+id/tipoPiattoView"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Piatto"
+        android:textColor="@android:color/holo_red_dark"
+        android:textSize="@dimen/preview_dog_field_size"
+        android:layout_marginStart="15dp"
+        android:layout_centerVertical="true"
+        android:layout_alignParentStart="true" />
+
+
+
+
+
+
+</RelativeLayout>
+

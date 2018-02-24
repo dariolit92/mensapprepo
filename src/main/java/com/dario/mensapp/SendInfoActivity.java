@@ -58,7 +58,10 @@ public class SendInfoActivity extends Activity {
         protected void onPostExecute(String output) {
 
             try {
-
+if(output.equals("Timeout connessione!")|| output.equals(HttpCalls.CONNECTION_FAILED)){
+    finish();
+    Toast.makeText(SendInfoActivity.this, output, Toast.LENGTH_SHORT).show();
+}
                 JSONObject objResponse = new JSONObject(output);
                 Intent intent;
                 if(objResponse.has("error") ){
@@ -68,22 +71,23 @@ public class SendInfoActivity extends Activity {
                     startActivity(intent.addFlags(NEW_ACTIVITY_ON_TOP));
                 }else {
                     String response=objResponse.getString("response");
-                    if (response.equals("login")) {
-
-
-                        String sessionId = objResponse.getString("sessionid");
+                   switch (response){
+                       case "login":
+                           String sessionId = objResponse.getString("sessionid");
                         String cfUtente = objResponse.getString("codicefiscale");
-
-
-                        UserSession.setSession(SendInfoActivity.this, cfUtente, sessionId);
+                           UserSession.setSession(SendInfoActivity.this, cfUtente, sessionId);
+                           Toast.makeText(getApplicationContext(), cfUtente+sessionId, Toast.LENGTH_LONG).show();
                         intent = new Intent(SendInfoActivity.this, HomeActivity.class);
-
                         startActivity(intent.addFlags(NEW_ACTIVITY_ON_TOP));
-                    }else {
-
+                           break;
+                       case "logout":
                         UserSession.expireSession(SendInfoActivity.this);
                         intent = new Intent(SendInfoActivity.this, MainActivity.class);
                         startActivity(intent.addFlags(NEW_ACTIVITY_ON_TOP));
+                           break;
+                       default:
+                           finish();
+                           Toast.makeText(SendInfoActivity.this, output, Toast.LENGTH_SHORT).show();
                     }
                 }
 

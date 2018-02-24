@@ -21,10 +21,13 @@ package com.dario.mensapp;
         import android.widget.Toast;
 
         import org.json.JSONArray;
+        import org.json.JSONException;
         import org.json.JSONObject;
 
         import java.io.UnsupportedEncodingException;
         import java.net.URLEncoder;
+        import java.text.DateFormat;
+        import java.text.ParseException;
         import java.text.SimpleDateFormat;
         import java.util.ArrayList;
         import java.util.Calendar;
@@ -38,7 +41,6 @@ public class HomeFragment extends Fragment {
    public List<String> listaMense;
 
     private boolean daRicaricare;
-    private SwipeRefreshLayout refresh;
     private boolean chiamataRecenti;
     private boolean chiamataRicerca;
     private Spinner mensa;
@@ -58,9 +60,7 @@ public class HomeFragment extends Fragment {
         final View rootView = inflater.inflate(R.layout.fragment_home, container, false);
         mensa = (Spinner) rootView.findViewById(R.id.filtroMense);
         pasto = (Spinner) rootView.findViewById(R.id.filtroPasto);
-        cerca = (EditText) rootView.findViewById(R.id.cerca);     //campo per il nome del cane
         final ImageButton bottoneRicerca = (ImageButton) rootView.findViewById(R.id.ricerca);
-        refresh = (SwipeRefreshLayout) rootView.findViewById(R.id.swipeLayout);
         mialista = (ListView) rootView.findViewById(R.id.listView1);
 
         //caricamento cani recenti
@@ -72,10 +72,6 @@ public class HomeFragment extends Fragment {
         pasto.setAdapter(adapterPasto);
     new GetMense().execute(new HttpCalls());
 
-
-        adapterMensa = new ArrayAdapter<String>(getActivity(),
-                android.R.layout.simple_spinner_dropdown_item, listaMense);
-        mensa.setAdapter(adapterMensa);
 
 
 /*
@@ -89,184 +85,130 @@ public class HomeFragment extends Fragment {
                 return handled;
             }
         });
+        */
         bottoneRicerca.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                menseParam = (String) mensa.getSelectedItem();
-                pastoParam = (String) pasto.getSelectedItem();
+                try {
+                    menseParam = (String) mensa.getSelectedItem();
+                    pastoParam = (String) pasto.getSelectedItem();
+                    if(menseParam.equals("[Seleziona mensa..]")||pastoParam.equals("[Seleziona pasto..]")){
+                        Toast.makeText(getActivity(), "Mensa e/o pasto non selezionati!", Toast.LENGTH_SHORT).show();
 
-                    chiamataRicerca = true;
-                    chiamataRecenti = false;
-                    new Touched().execute(new ExternalDatabase());
+
+                        return;
+                    }
+
+
+                    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ITALY);
+                    Date date = new Date();
+                  String dataPiatto=  dateFormat.format(date);
+                    String indirizzo= menseParam.split(",")[0];
+                    JSONObject jsonObject = new JSONObject();
+                    jsonObject.put("mensa", indirizzo);
+                    jsonObject.put("datapiatto", dataPiatto);
+                    jsonObject.put("tipopasto", pastoParam.toLowerCase());
+
+                    new GetPiattiInMensa(jsonObject.toString()).execute(new HttpCalls());
+                }catch (JSONException e){
+                    e.printStackTrace();
+
+                }
                }
         });
 
-        refresh.setColorSchemeResources(android.R.color.holo_red_dark, R.color.red,
-                android.R.color.holo_red_light, R.color.red);
-        refresh.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
-            @Override
-            public void onRefresh() {
-                chiamataRecenti = true;
-                chiamataRicerca = false;
-                new Touched().execute(new ExternalDatabase());
 
-                new Handler().postDelayed(new Runnable() {
-                    @Override
-                    public void run() {
-                        refresh.setRefreshing(false);
-                    }
-                }, 7000);
-            }
-        });
-*/
         return rootView;
 
     }
-/*
-    private class Touched extends AsyncTask<HttpCalls, Long, JSONArray> {
+
+    private class GetPiattiInMensa extends AsyncTask<HttpCalls, Long, String> {
         @Override
-        protected JSONArray doInBackground(ExternalDatabase... params) {
-            try {
-                // eseguito in background
-                if (chiamataRecenti)
-                    return params[0].getData("http://" + ExternalDatabase.DOMAIN + "/search.php");
-                else //chiamataRicerca
-                    return params[0].getData("http://" + ExternalDatabase.DOMAIN + "/search.php?nome=" + URLEncoder.encode(nomeCane, "UTF-8") + "&razza=" + URLEncoder.encode(razzaCane, "UTF-8") + "&sesso=" + sessoCane + "&stato=" + URLEncoder.encode(statoCane, "UTF-8") + "&citta=" + URLEncoder.encode(zonaCane, "UTF-8"));
-
-
-            } catch (UnsupportedEncodingException x) {
-                return params[0].getData("http://" + ExternalDatabase.DOMAIN + "/search.php");
-            }
-
+        protected String doInBackground(HttpCalls... params) {
+            return params[0].getData( HttpCalls.DOMAIN + "/getPiattiInMensa.php?params="+paramInput);
         }
 
+        private String paramInput;
+private GetPiattiInMensa(String paramInput){
+this.paramInput=paramInput;
+}
         @Override
-        protected void onPostExecute(JSONArray jsonArray) {
-            refresh.setRefreshing(false);
+        protected void onPostExecute(String output) {
             try {
-                JSONObject objectControllo = jsonArray.getJSONObject(0);
-                List<Cane> listaCani = new LinkedList<>();
-                if (objectControllo.has("output")) {
-                    if (listaCaricata) {
-                        if (chiamataRecenti) {
-                            chiamataRecenti = false;
+                Toast.makeText(getActivity(),output, Toast.LENGTH_SHORT).show();
 
-                        }
-                        if (chiamataRicerca) {
-                            chiamataRicerca = false;
-                        }
-                        adapter.clear();
-                        adapter.notifyDataSetChanged();
+                JSONArray jsonArray= new JSONArray(output);
+                List<String> listaPiatti = new LinkedList<>();
 
-                    }
-                    Toast.makeText(getActivity(), "Cane non trovato", Toast.LENGTH_SHORT).show();
-                } else {
 
                     JSONObject jsonObject;
 
 
-                    String nomecane;
-                    int idCane;
-                    String zona;
-                    String razza;
-                    String stato;
-                    String dataDiNascita;
-                    String dataRegistrazione;
+
+                    int idPiatto;
+                    String nome;
+                    String mensa;
+                    String dataPiatto;
+                String tipoPiatto;
+
+List<Piatto> primi= new LinkedList<>();
+                List<Piatto> secondi= new LinkedList<>();
+                List<Piatto> contorni= new LinkedList<>();
+                List<Piatto> dessert= new LinkedList<>();
+
+                for (int i=0; i<jsonArray.length(); i++){
+    jsonObject=jsonArray.getJSONObject(i);
+    idPiatto=jsonObject.getInt("Id");
+    nome=jsonObject.getString("Nome");
+    mensa=jsonObject.getString("Mensa");
+    dataPiatto=jsonObject.getString("DataPiatto");
+    tipoPiatto=jsonObject.getString("TipoPiatto");
+
+                    Date date1=new SimpleDateFormat("yyyy-MM-dd", Locale.ITALY).parse(dataPiatto);
                     SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.ITALY);
-                    Date birth;
-                    Date registerDate;
-                    String image;
-                    String sesso;
-                    int lungArray;
-                    if (chiamataRecenti) {
-                        lungArray = 10;
-                    } else
-                        lungArray = jsonArray.length();
 
-                    for (int i = 0; i < lungArray; i++) {
+    Piatto piatto= new Piatto(idPiatto,tipoPiatto, nome, mensa, formatter.format(date1));
+if(tipoPiatto.equals("primo")){
+    primi.add(piatto);
+}else if(tipoPiatto.equals("secondo")){
+    secondi.add(piatto);
 
-                        jsonObject = jsonArray.getJSONObject(i);
-                        idCane = jsonObject.getInt("id");
-                        nomecane = jsonObject.getString("nome");
+}else if(tipoPiatto.equals("contorno")){
+    contorni.add(piatto);
 
-                        image = jsonObject.getString("img");
-                        sesso = jsonObject.getString("sesso");
-                        razza = jsonObject.getString("razza");
+}else if(tipoPiatto.equals("dessert")){
+    dessert.add(piatto);
 
-                        dataDiNascita = jsonObject.getString("datanascita");
-                        dataRegistrazione = jsonObject.getString("datacreazione");
-                        stato = jsonObject.getString("stato");
-                        zona = jsonObject.getString("citta");
-                        birth = formatter.parse(dataDiNascita);
-                        registerDate = formatter.parse(dataRegistrazione);
-                        Cane c = new Cane(idCane, nomecane, zona, razza, sesso,
-                                stato, image, birth, isNewCane(registerDate));
-
-                        if (chiamataRecenti) {
-                            if (c.compareDogs(primo)) {
-                                if (daRicaricare) {
-                                    listaCani.add(c);
-                                    continue;
-                                } else                    // l'aggiornamento avviene solo se il primo cane della nuova lista è diverso dal cane della lista corrente
-                                    return;
-                            }
-                            if (i == 0) {
-
-                                primo = c;
-                                if (daRicaricare) {
-                                    listaCani.add(c);
-                                    continue;
-                                }
-                            }
-
-                            listaCani.add(c);
-
-
-                        } else {//chiamataRicerca
-
-
-                            daRicaricare = true;
-                            listaCani.add(c);
-                        }
-                    }
-                }
-
-                adapter = new TestImmagineAdapter(getActivity(), R.layout.preview_cane, listaCani);
+}
+}
+UserSession.setPrimiPiatti(primi);
+                UserSession.setSecondiPiatti(secondi);
+                UserSession.setContorni(contorni);
+                UserSession.setDessert(dessert);
+                TestImmagineAdapter  adapter = new TestImmagineAdapter(getActivity(), R.layout.preview_piatto, UserSession.getPrimiPiatti());
+List<Piatto> piattiOrdinati=new LinkedList<>();
+                UserSession.setPiattiOrdinati(piattiOrdinati);
 
                 // Getting adapter by passing xml data ArrayList
 
                 mialista.setAdapter(adapter);
-                listaCaricata = true;
-                if (chiamataRecenti) {
-                    chiamataRecenti = false;
 
-                } else {
-                    chiamataRicerca = false;
-                }
                 AdapterView.OnItemClickListener clickListener = new AdapterView.OnItemClickListener() {
 
                     @Override
                     public void onItemClick(AdapterView<?> adapter, View view,
                                             int position, long id) {
-                        Cane caneSelezionato = (Cane) adapter.getItemAtPosition(position);
-
-                        Intent openPage = new Intent(getActivity(), DogProfileActivity.class);
-                        openPage.putExtra("idCaneSelezionato", caneSelezionato.getId());
-                        openPage.putExtra("nomeCaneSelezionato", caneSelezionato.getNome());
-
-                        startActivity(openPage);
+                        Piatto piattoSelezionato = (Piatto) adapter.getItemAtPosition(position);
+                        mialista.setAdapter(null);
                     }
                 };
                 mialista.setOnItemClickListener(clickListener);
 
-                sesso.setAdapter(adapterSesso);
 
-                stato.setAdapter(adapterStatoVuoto);
-                razza.setAdapter(adapterRazza);
-                zona.setText("");
-                cerca.setText("");
-
-            } catch (Exception e) {
+            } catch (JSONException e){
+                e.printStackTrace();
+            }
+            catch (ParseException e){
                 e.printStackTrace();
             }
         }
@@ -274,7 +216,7 @@ public class HomeFragment extends Fragment {
 
 
 
-*/
+
     private class GetMense extends AsyncTask<HttpCalls, Long, String> {
         @Override
         protected String doInBackground(HttpCalls... params) {
@@ -296,6 +238,7 @@ public class HomeFragment extends Fragment {
                     String indirizzo;
                  String citta;
 
+                listaMense.add("[Seleziona mensa..]");
 
                     for (int i = 0; i < jsonArray.length(); i++) {
 
@@ -303,10 +246,14 @@ public class HomeFragment extends Fragment {
                         indirizzo = jsonObject.getString("Indirizzo");
 
                         citta = jsonObject.getString("Citta");
-                        listaMense.add(indirizzo+" , "+citta);
+                        listaMense.add(indirizzo+","+citta);
 
                     }
 
+
+                adapterMensa = new ArrayAdapter<String>(getActivity(),
+                        android.R.layout.simple_spinner_dropdown_item, listaMense);
+                mensa.setAdapter(adapterMensa);
 
 
             } catch (Exception e) {

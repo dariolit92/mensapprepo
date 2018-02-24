@@ -2,6 +2,8 @@
     <string name="app_name">MensApp</string>
     <string name="facebook_app_id">213051359232873</string>
     <string name="fb_login_protocol_scheme">fb213051359232873</string>
+
+
     <string-array name="array_fasce">
         <item>prima</item>
         <item>seconda</item>
@@ -37,7 +39,9 @@
     <string name="desc_list_item_icon">Item Icon</string>
 
     <string-array name="tipopasto">
-    <item>Pranzo</item>
+        <item>[Seleziona pasto…]</item>
+
+        <item>Pranzo</item>
         <item>Cena</item>
 
     </string-array>

@@ -1,6 +1,6 @@
 package com.dario.mensapp;
 
-import android.support.v7.app.AppCompatActivity;
+import android.app.Activity;
 import android.os.Bundle;
 
 import android.content.Context;
@@ -33,7 +33,7 @@ import java.io.Serializable;
 import java.util.HashMap;
 import java.util.Map;
 
-public class RegisterActivity extends AppCompatActivity {
+public class RegisterActivity extends Activity {
 
 
     private EditText emailUtenteView;

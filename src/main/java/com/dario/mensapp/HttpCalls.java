@@ -21,8 +21,8 @@ public final class HttpCalls {
         try {
             URL url = new URL(urlHttp);
             HttpURLConnection conn = (HttpURLConnection) url.openConnection();
-            conn.setReadTimeout(15000 /* milliseconds */);
-            conn.setConnectTimeout(15000 /* milliseconds */);
+            conn.setReadTimeout(10000 /* milliseconds */);
+            conn.setConnectTimeout(10000 /* milliseconds */);
             conn.setRequestMethod("GET");
             conn.setDoInput(true);
             conn.setRequestProperty("Content-Type", "application/json; charset=utf-8");
@@ -71,8 +71,8 @@ public final class HttpCalls {
 
         HttpURLConnection conn = (HttpURLConnection) url.openConnection();
 
-        conn.setReadTimeout(15000 /* milliseconds */);
-        conn.setConnectTimeout(15000 /* milliseconds */);
+        conn.setReadTimeout(10000 /* milliseconds */);
+        conn.setConnectTimeout(10000 /* milliseconds */);
         conn.setRequestMethod("POST");
             conn.setRequestProperty("Content-Type", "application/json; charset=utf-8");
 

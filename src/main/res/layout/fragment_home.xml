@@ -14,49 +14,22 @@
 
         <Spinner
             android:id="@+id/filtroMense"
-            android:layout_width="110dp"
+            android:layout_width="165dp"
             android:layout_height="40dp"
             android:background="@drawable/cerca_vuoto" />
 
         <Spinner
             android:id="@+id/filtroPasto"
-            android:layout_width="110dp"
+            android:layout_width="151dp"
             android:layout_height="40dp"
             android:background="@drawable/cerca_vuoto" />
 
-
-
-    </LinearLayout>
-
-    <LinearLayout
-        android:id="@+id/layoutCerca"
-        android:layout_width="wrap_content"
-        android:layout_height="30dp"
-        android:layout_gravity="center_horizontal"
-        android:divider="@android:color/holo_red_dark"
-        android:dividerPadding="@dimen/activity_horizontal_margin">
-
-        <EditText
-            android:id="@+id/cerca"
-            android:layout_width="300dp"
-            android:layout_height="30dp"
-            android:layout_gravity="center_horizontal"
-            android:layout_marginTop="10dp"
-            android:background="@drawable/cerca_vuoto"
-            android:hint="Cerca i piatti del tuo pasto"
-            android:imeOptions="actionSearch"
-            android:inputType="textCapWords"
-            android:paddingLeft="10dp"
-            android:paddingRight="10dp"
-            android:textColor="@color/white"
-            android:textColorHint="@color/grey"
-            android:textSize="16sp" />
-
         <ImageButton
             android:id="@+id/ricerca"
-            android:layout_width="30dp"
-            android:layout_height="30dp"
+            android:layout_width="43dp"
+            android:layout_height="match_parent"
             android:background="@drawable/icona_ricerca" />
+
 
     </LinearLayout>
 
