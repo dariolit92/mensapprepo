@@ -7,6 +7,7 @@ import android.view.ViewGroup;
 import android.widget.ArrayAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 
 import java.util.List;
@@ -35,6 +36,7 @@ public class TestImmagineAdapter extends ArrayAdapter<Piatto> {
 
         nomeView.setText(piatto.getNome().toUpperCase());
         tipoView.setText(piatto.getTipoPiatto().toUpperCase());
+
         if(piatto.getTipoPiatto().equals("primo")) {
             imgPiatto.setBackgroundResource(R.drawable.iconaprimi);
         }else if (piatto.getTipoPiatto().equals("secondo")){

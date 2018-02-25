@@ -40,18 +40,13 @@ public class HomeFragment extends Fragment {
     private ListView mialista;
    public List<String> listaMense;
 
-    private boolean daRicaricare;
-    private boolean chiamataRecenti;
-    private boolean chiamataRicerca;
     private Spinner mensa;
     private Spinner pasto;
-    private EditText cerca;
     private ArrayAdapter<String> adapterMensa;
     private ArrayAdapter<CharSequence> adapterPasto;
-    private String zonaCane;
     private String menseParam;
     private String pastoParam;
-    private boolean listaCaricata;
+    private ImageButton buttonSalta;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -62,11 +57,8 @@ public class HomeFragment extends Fragment {
         pasto = (Spinner) rootView.findViewById(R.id.filtroPasto);
         final ImageButton bottoneRicerca = (ImageButton) rootView.findViewById(R.id.ricerca);
         mialista = (ListView) rootView.findViewById(R.id.listView1);
-
-        //caricamento cani recenti
-        chiamataRecenti = true;
-        chiamataRicerca = false;
-
+      buttonSalta = (ImageButton) rootView.findViewById(R.id.buttonSalta);
+        buttonSalta.setVisibility(View.INVISIBLE);
         adapterPasto = ArrayAdapter.createFromResource(
                 getActivity(), R.array.tipopasto, android.R.layout.simple_spinner_dropdown_item);
         pasto.setAdapter(adapterPasto);
@@ -167,7 +159,7 @@ List<Piatto> primi= new LinkedList<>();
                     Date date1=new SimpleDateFormat("yyyy-MM-dd", Locale.ITALY).parse(dataPiatto);
                     SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.ITALY);
 
-    Piatto piatto= new Piatto(idPiatto,tipoPiatto, nome, mensa, formatter.format(date1));
+    Piatto piatto= new Piatto(idPiatto,nome,tipoPiatto, mensa, formatter.format(date1));
 if(tipoPiatto.equals("primo")){
     primi.add(piatto);
 }else if(tipoPiatto.equals("secondo")){
@@ -186,20 +178,83 @@ UserSession.setPrimiPiatti(primi);
                 UserSession.setContorni(contorni);
                 UserSession.setDessert(dessert);
                 TestImmagineAdapter  adapter = new TestImmagineAdapter(getActivity(), R.layout.preview_piatto, UserSession.getPrimiPiatti());
-List<Piatto> piattiOrdinati=new LinkedList<>();
-                UserSession.setPiattiOrdinati(piattiOrdinati);
+final List<Piatto> piattiOrdinati=new LinkedList<>();
 
                 // Getting adapter by passing xml data ArrayList
 
                 mialista.setAdapter(adapter);
-
+                buttonSalta.setVisibility(View.VISIBLE);
                 AdapterView.OnItemClickListener clickListener = new AdapterView.OnItemClickListener() {
 
                     @Override
                     public void onItemClick(AdapterView<?> adapter, View view,
                                             int position, long id) {
                         Piatto piattoSelezionato = (Piatto) adapter.getItemAtPosition(position);
-                        mialista.setAdapter(null);
+                        if(piattoSelezionato.getTipoPiatto().equals("primo")) {
+                            buttonSalta.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    mialista.setAdapter(null);
+
+                                    TestImmagineAdapter  adapterSecondi = new TestImmagineAdapter(getActivity(), R.layout.preview_piatto, UserSession.getSecondiPiatti());
+
+
+                                    mialista.setAdapter(adapterSecondi);
+                                }
+
+
+                            });
+                            piattiOrdinati.add(piattoSelezionato);
+                            mialista.setAdapter(null);
+                            TestImmagineAdapter adapterSecondi = new TestImmagineAdapter(getActivity(), R.layout.preview_piatto, UserSession.getSecondiPiatti());
+
+
+                            mialista.setAdapter(adapterSecondi);
+                        }else if(piattoSelezionato.getTipoPiatto().equals("secondo")){
+                            buttonSalta.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    mialista.setAdapter(null);
+
+                                    TestImmagineAdapter  adapterContorni = new TestImmagineAdapter(getActivity(), R.layout.preview_piatto, UserSession.getContorni());
+
+
+                                    mialista.setAdapter(adapterContorni);
+                                }
+
+
+                            });
+
+                            piattiOrdinati.add(piattoSelezionato);
+                            mialista.setAdapter(null);
+                            TestImmagineAdapter adapterContorni = new TestImmagineAdapter(getActivity(), R.layout.preview_piatto, UserSession.getContorni());
+
+
+                            mialista.setAdapter(adapterContorni);
+                        }
+                        else if(piattoSelezionato.getTipoPiatto().equals("contorni")){
+                            buttonSalta.setOnClickListener(new View.OnClickListener() {
+                                @Override
+                                public void onClick(View v) {
+                                    mialista.setAdapter(null);
+
+                                    TestImmagineAdapter  adapterDessert = new TestImmagineAdapter(getActivity(), R.layout.preview_piatto, UserSession.getDessert());
+
+
+                                    mialista.setAdapter(adapterDessert);
+                                }
+
+
+                            });
+                            piattiOrdinati.add(piattoSelezionato);
+                            mialista.setAdapter(null);
+                            TestImmagineAdapter adapterDessert = new TestImmagineAdapter(getActivity(), R.layout.preview_piatto, UserSession.getDessert());
+
+
+                            mialista.setAdapter(adapterDessert);
+                        }else{
+                            return;
+                        }
                     }
                 };
                 mialista.setOnItemClickListener(clickListener);
