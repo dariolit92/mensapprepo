@@ -1,53 +1,53 @@
 package com.dario.mensapp;
 
-        import android.content.Intent;
-        import android.os.AsyncTask;
-        import android.os.Bundle;
-        import android.os.Handler;
-        import android.support.v4.app.Fragment;
-        import android.support.v4.widget.SwipeRefreshLayout;
-        import android.view.KeyEvent;
-        import android.view.LayoutInflater;
-        import android.view.View;
-        import android.view.ViewGroup;
-        import android.view.inputmethod.EditorInfo;
-        import android.widget.AdapterView;
-        import android.widget.ArrayAdapter;
-        import android.widget.EditText;
-        import android.widget.ImageButton;
-        import android.widget.ListView;
-        import android.widget.Spinner;
-        import android.widget.TextView;
-        import android.widget.Toast;
+import android.content.Intent;
+import android.os.AsyncTask;
+import android.os.Bundle;
+import android.os.Handler;
+import android.support.v4.app.Fragment;
+import android.support.v4.widget.SwipeRefreshLayout;
+import android.view.KeyEvent;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.view.ViewGroup;
+import android.view.inputmethod.EditorInfo;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.EditText;
+import android.widget.ImageButton;
+import android.widget.ListView;
+import android.widget.Spinner;
+import android.widget.TextView;
+import android.widget.Toast;
 
-        import org.json.JSONArray;
-        import org.json.JSONException;
-        import org.json.JSONObject;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
-        import java.io.UnsupportedEncodingException;
-        import java.net.URLEncoder;
-        import java.text.DateFormat;
-        import java.text.ParseException;
-        import java.text.SimpleDateFormat;
-        import java.util.ArrayList;
-        import java.util.Calendar;
-        import java.util.Date;
-        import java.util.LinkedList;
-        import java.util.List;
-        import java.util.Locale;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.text.DateFormat;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
 
 public class HomeFragment extends Fragment {
     private ListView mialista;
-   public List<String> listaMense;
+    public List<String> listaMense;
 
-    private Spinner mensa;
-    private Spinner pasto;
+    public Spinner mensa;
+    public Spinner pasto;
     private ArrayAdapter<String> adapterMensa;
     private ArrayAdapter<CharSequence> adapterPasto;
     private String menseParam;
     private String pastoParam;
-    private ImageButton buttonSalta;
-
+    public ImageButton buttonSalta;
+    public ImageButton buttonPrenota;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -57,12 +57,16 @@ public class HomeFragment extends Fragment {
         pasto = (Spinner) rootView.findViewById(R.id.filtroPasto);
         final ImageButton bottoneRicerca = (ImageButton) rootView.findViewById(R.id.ricerca);
         mialista = (ListView) rootView.findViewById(R.id.listView1);
-      buttonSalta = (ImageButton) rootView.findViewById(R.id.buttonSalta);
+        buttonSalta = (ImageButton) rootView.findViewById(R.id.buttonSalta);
+        buttonPrenota = (ImageButton) rootView.findViewById(R.id.buttonPrenota);
+
         buttonSalta.setVisibility(View.INVISIBLE);
+        buttonPrenota.setVisibility(View.INVISIBLE);
+
         adapterPasto = ArrayAdapter.createFromResource(
                 getActivity(), R.array.tipopasto, android.R.layout.simple_spinner_dropdown_item);
         pasto.setAdapter(adapterPasto);
-    new GetMense().execute(new HttpCalls());
+        new GetMense().execute(new HttpCalls());
 
 
 
@@ -94,7 +98,7 @@ public class HomeFragment extends Fragment {
 
                     DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ITALY);
                     Date date = new Date();
-                  String dataPiatto=  dateFormat.format(date);
+                    String dataPiatto=  dateFormat.format(date);
                     String indirizzo= menseParam.split(",")[0];
                     JSONObject jsonObject = new JSONObject();
                     jsonObject.put("mensa", indirizzo);
@@ -106,9 +110,8 @@ public class HomeFragment extends Fragment {
                     e.printStackTrace();
 
                 }
-               }
+            }
         });
-
 
         return rootView;
 
@@ -121,9 +124,9 @@ public class HomeFragment extends Fragment {
         }
 
         private String paramInput;
-private GetPiattiInMensa(String paramInput){
-this.paramInput=paramInput;
-}
+        private GetPiattiInMensa(String paramInput){
+            this.paramInput=paramInput;
+        }
         @Override
         protected void onPostExecute(String output) {
             try {
@@ -133,52 +136,53 @@ this.paramInput=paramInput;
                 List<String> listaPiatti = new LinkedList<>();
 
 
-                    JSONObject jsonObject;
+                JSONObject jsonObject;
 
 
 
-                    int idPiatto;
-                    String nome;
-                    String mensa;
-                    String dataPiatto;
+                int idPiatto;
+                String nome;
+                String mensaParam;
+                String dataPiatto;
                 String tipoPiatto;
-
-List<Piatto> primi= new LinkedList<>();
+                 int idPasto;
+                List<Piatto> primi= new LinkedList<>();
                 List<Piatto> secondi= new LinkedList<>();
                 List<Piatto> contorni= new LinkedList<>();
                 List<Piatto> dessert= new LinkedList<>();
 
                 for (int i=0; i<jsonArray.length(); i++){
-    jsonObject=jsonArray.getJSONObject(i);
-    idPiatto=jsonObject.getInt("Id");
-    nome=jsonObject.getString("Nome");
-    mensa=jsonObject.getString("Mensa");
-    dataPiatto=jsonObject.getString("DataPiatto");
-    tipoPiatto=jsonObject.getString("TipoPiatto");
+                    jsonObject=jsonArray.getJSONObject(i);
+                    idPiatto=jsonObject.getInt("Id");
+                    nome=jsonObject.getString("Nome");
+                    mensaParam=jsonObject.getString("Mensa");
+                    dataPiatto=jsonObject.getString("DataPiatto");
+                    tipoPiatto=jsonObject.getString("TipoPiatto");
+                    idPasto=jsonObject.getInt("Pasto");
 
                     Date date1=new SimpleDateFormat("yyyy-MM-dd", Locale.ITALY).parse(dataPiatto);
                     SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd", Locale.ITALY);
 
-    Piatto piatto= new Piatto(idPiatto,nome,tipoPiatto, mensa, formatter.format(date1));
-if(tipoPiatto.equals("primo")){
-    primi.add(piatto);
-}else if(tipoPiatto.equals("secondo")){
-    secondi.add(piatto);
+                    Piatto piatto= new Piatto(idPiatto,nome,tipoPiatto,idPasto, mensaParam, formatter.format(date1));
+                    if(tipoPiatto.equals("primo")){
+                        primi.add(piatto);
+                    }else if(tipoPiatto.equals("secondo")){
+                        secondi.add(piatto);
 
-}else if(tipoPiatto.equals("contorno")){
-    contorni.add(piatto);
+                    }else if(tipoPiatto.equals("contorno")){
+                        contorni.add(piatto);
 
-}else if(tipoPiatto.equals("dessert")){
-    dessert.add(piatto);
+                    }else if(tipoPiatto.equals("dessert")){
+                        dessert.add(piatto);
 
-}
-}
-UserSession.setPrimiPiatti(primi);
+                    }
+                }
+                UserSession.setPrimiPiatti(primi);
                 UserSession.setSecondiPiatti(secondi);
                 UserSession.setContorni(contorni);
                 UserSession.setDessert(dessert);
                 TestImmagineAdapter  adapter = new TestImmagineAdapter(getActivity(), R.layout.preview_piatto, UserSession.getPrimiPiatti());
-final List<Piatto> piattiOrdinati=new LinkedList<>();
+                final List<Piatto> piattiOrdinati=new LinkedList<>();
 
                 // Getting adapter by passing xml data ArrayList
 
@@ -191,19 +195,7 @@ final List<Piatto> piattiOrdinati=new LinkedList<>();
                                             int position, long id) {
                         Piatto piattoSelezionato = (Piatto) adapter.getItemAtPosition(position);
                         if(piattoSelezionato.getTipoPiatto().equals("primo")) {
-                            buttonSalta.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    mialista.setAdapter(null);
 
-                                    TestImmagineAdapter  adapterSecondi = new TestImmagineAdapter(getActivity(), R.layout.preview_piatto, UserSession.getSecondiPiatti());
-
-
-                                    mialista.setAdapter(adapterSecondi);
-                                }
-
-
-                            });
                             piattiOrdinati.add(piattoSelezionato);
                             mialista.setAdapter(null);
                             TestImmagineAdapter adapterSecondi = new TestImmagineAdapter(getActivity(), R.layout.preview_piatto, UserSession.getSecondiPiatti());
@@ -211,19 +203,7 @@ final List<Piatto> piattiOrdinati=new LinkedList<>();
 
                             mialista.setAdapter(adapterSecondi);
                         }else if(piattoSelezionato.getTipoPiatto().equals("secondo")){
-                            buttonSalta.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    mialista.setAdapter(null);
 
-                                    TestImmagineAdapter  adapterContorni = new TestImmagineAdapter(getActivity(), R.layout.preview_piatto, UserSession.getContorni());
-
-
-                                    mialista.setAdapter(adapterContorni);
-                                }
-
-
-                            });
 
                             piattiOrdinati.add(piattoSelezionato);
                             mialista.setAdapter(null);
@@ -232,20 +212,8 @@ final List<Piatto> piattiOrdinati=new LinkedList<>();
 
                             mialista.setAdapter(adapterContorni);
                         }
-                        else if(piattoSelezionato.getTipoPiatto().equals("contorni")){
-                            buttonSalta.setOnClickListener(new View.OnClickListener() {
-                                @Override
-                                public void onClick(View v) {
-                                    mialista.setAdapter(null);
+                        else if(piattoSelezionato.getTipoPiatto().equals("contorno")){
 
-                                    TestImmagineAdapter  adapterDessert = new TestImmagineAdapter(getActivity(), R.layout.preview_piatto, UserSession.getDessert());
-
-
-                                    mialista.setAdapter(adapterDessert);
-                                }
-
-
-                            });
                             piattiOrdinati.add(piattoSelezionato);
                             mialista.setAdapter(null);
                             TestImmagineAdapter adapterDessert = new TestImmagineAdapter(getActivity(), R.layout.preview_piatto, UserSession.getDessert());
@@ -253,12 +221,149 @@ final List<Piatto> piattiOrdinati=new LinkedList<>();
 
                             mialista.setAdapter(adapterDessert);
                         }else{
-                            return;
+                            piattiOrdinati.add(piattoSelezionato);
+
+                            UserSession.setPiattiOrdinati(piattiOrdinati);
+                            if(piattiOrdinati.size()==0){
+                                Toast.makeText(getActivity(), "Non hai scelto nessun piatto!", Toast.LENGTH_SHORT).show();
+                                mialista.setAdapter(null);
+                                mensa.setSelection(0);
+                                pasto.setSelection(0);
+                                buttonSalta.setVisibility(View.INVISIBLE);
+                                return;
+
+                            }else{
+                                mialista.setAdapter(null);
+
+                                TestImmagineAdapter  adapterOrdinati = new TestImmagineAdapter(getActivity(), R.layout.preview_piatto, UserSession.getPiattiOrdinati());
+
+
+                                mialista.setAdapter(adapterOrdinati);
+                                buttonSalta.setVisibility(View.INVISIBLE);
+
+                                buttonPrenota.setVisibility(View.VISIBLE);
+                                buttonPrenota.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        try {
+                                            JSONObject paramsPrenota = new JSONObject();
+                                            paramsPrenota.put("codicefiscale", UserSession.getUserID());
+                                            paramsPrenota.put("pastiaddebitati", UserSession.getPastiAddebitati() );
+                                            paramsPrenota.put("idpasti", UserSession.getPiattiOrdinati().get(0).getIdPasto() );
+                                            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ITALY);
+                                            Date date = new Date();
+                                            String dataPrenotazione=  dateFormat.format(date);
+                                            paramsPrenota.put("sessionid", UserSession.getSessionID());
+                                            Toast.makeText(getActivity(), UserSession.getSessionID(), Toast.LENGTH_SHORT).show();
+
+                                            paramsPrenota.put("dataprenotazione", dataPrenotazione);
+                                            new AddPrenotazione(paramsPrenota).execute(new HttpCalls());
+                                        }catch (JSONException ex){
+                                            ex.printStackTrace();
+                                        }
+                                    }
+
+
+
+                                });
+
+                            }
                         }
                     }
                 };
                 mialista.setOnItemClickListener(clickListener);
 
+                buttonSalta.setOnClickListener(new View.OnClickListener() {
+                    @Override
+                    public void onClick(View v) {
+
+
+                        if(piattiOrdinati.get(piattiOrdinati.size()-1).getTipoPiatto().equals("primo")) {
+
+                            mialista.setAdapter(null);
+
+                            TestImmagineAdapter adapterSecondi = new TestImmagineAdapter(getActivity(), R.layout.preview_piatto, UserSession.getSecondiPiatti());
+
+
+                            mialista.setAdapter(adapterSecondi);
+                        }
+                        else if(piattiOrdinati.get(piattiOrdinati.size()-1).getTipoPiatto().equals("secondo")){
+
+
+
+                            mialista.setAdapter(null);
+
+                            TestImmagineAdapter adapterContorni = new TestImmagineAdapter(getActivity(), R.layout.preview_piatto, UserSession.getContorni());
+
+
+                            mialista.setAdapter(adapterContorni);
+
+
+
+                        }
+                        else if(piattiOrdinati.get(piattiOrdinati.size()-1).getTipoPiatto().equals("contorno")){
+
+                            mialista.setAdapter(null);
+
+                            TestImmagineAdapter  adapterDessert = new TestImmagineAdapter(getActivity(), R.layout.preview_piatto, UserSession.getDessert());
+
+
+                            mialista.setAdapter(adapterDessert);
+                        }
+                        else{
+                            UserSession.setPiattiOrdinati(piattiOrdinati);
+
+                            if(piattiOrdinati.size()==0){
+                                Toast.makeText(getActivity(), "Non hai scelto nessun piatto", Toast.LENGTH_SHORT).show();
+                                mialista.setAdapter(null);
+                                mensa.setSelection(0);
+                                pasto.setSelection(0);
+                                buttonSalta.setVisibility(View.INVISIBLE);
+                                return;
+
+                            }else{
+                                mialista.setAdapter(null);
+
+                                TestImmagineAdapter  adapterOrdinati = new TestImmagineAdapter(getActivity(), R.layout.preview_piatto, UserSession.getPiattiOrdinati());
+
+
+                                mialista.setAdapter(adapterOrdinati);
+                                buttonSalta.setVisibility(View.INVISIBLE);
+
+                                buttonPrenota.setVisibility(View.VISIBLE);
+                                buttonPrenota.setOnClickListener(new View.OnClickListener() {
+                                    @Override
+                                    public void onClick(View v) {
+                                        try {
+                                            JSONObject paramsPrenota = new JSONObject();
+                                            paramsPrenota.put("codicefiscale", UserSession.getUserID());
+                                            paramsPrenota.put("pastiaddebitati", UserSession.getPastiAddebitati() );
+                                            paramsPrenota.put("idpasti", UserSession.getPiattiOrdinati().get(0).getIdPasto() );
+                                            DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ITALY);
+                                            Date date = new Date();
+                                            String dataPrenotazione=  dateFormat.format(date);
+                                            paramsPrenota.put("sessionid", UserSession.getSessionID());
+
+                                            paramsPrenota.put("dataprenotazione", dataPrenotazione);
+                                            new AddPrenotazione(paramsPrenota).execute(new HttpCalls());
+                                        }catch (JSONException ex){
+                                            ex.printStackTrace();
+                                        }
+                                    }
+
+
+
+                                });
+
+                            }
+                        }
+
+
+
+                    }
+
+
+                });
 
             } catch (JSONException e){
                 e.printStackTrace();
@@ -270,13 +375,39 @@ final List<Piatto> piattiOrdinati=new LinkedList<>();
     }
 
 
+    private class AddPrenotazione extends AsyncTask<HttpCalls, Long, String> {
+        private JSONObject params;
+        private  AddPrenotazione(JSONObject params){
+            this.params=params;
+        }
+        @Override
+        protected String doInBackground(HttpCalls... params) {
 
+            return params[0].postData(HttpCalls.DOMAIN + "/addPrenotazione.php", this.params);
+
+
+        }
+
+        @Override
+        protected void onPostExecute(String output) {
+if(output.equals("Prenotazione Aggiunta")){
+    Toast.makeText(getActivity(), "Il tuo pasto a mensa è prenotato!", Toast.LENGTH_SHORT).show();
+    buttonPrenota.setVisibility(View.INVISIBLE);
+
+}
+else{
+    Toast.makeText(getActivity(), output, Toast.LENGTH_SHORT).show();
+    buttonPrenota.setVisibility(View.INVISIBLE);
+
+}
+        }
+    }
 
     private class GetMense extends AsyncTask<HttpCalls, Long, String> {
         @Override
         protected String doInBackground(HttpCalls... params) {
 
-                    return params[0].getData( HttpCalls.DOMAIN + "/getMense.php");
+            return params[0].getData( HttpCalls.DOMAIN + "/getMense.php");
 
 
         }
@@ -287,23 +418,23 @@ final List<Piatto> piattiOrdinati=new LinkedList<>();
                 JSONArray jsonArray = new JSONArray(output);
 
 
-                    JSONObject jsonObject;
+                JSONObject jsonObject;
 
 
-                    String indirizzo;
-                 String citta;
+                String indirizzo;
+                String citta;
 
                 listaMense.add("[Seleziona mensa..]");
 
-                    for (int i = 0; i < jsonArray.length(); i++) {
+                for (int i = 0; i < jsonArray.length(); i++) {
 
-                        jsonObject = jsonArray.getJSONObject(i);
-                        indirizzo = jsonObject.getString("Indirizzo");
+                    jsonObject = jsonArray.getJSONObject(i);
+                    indirizzo = jsonObject.getString("Indirizzo");
 
-                        citta = jsonObject.getString("Citta");
-                        listaMense.add(indirizzo+","+citta);
+                    citta = jsonObject.getString("Citta");
+                    listaMense.add(indirizzo+","+citta);
 
-                    }
+                }
 
 
                 adapterMensa = new ArrayAdapter<String>(getActivity(),

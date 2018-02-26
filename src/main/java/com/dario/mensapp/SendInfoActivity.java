@@ -75,7 +75,9 @@ if(output.equals("Timeout connessione!")|| output.equals(HttpCalls.CONNECTION_FA
                        case "login":
                            String sessionId = objResponse.getString("sessionid");
                         String cfUtente = objResponse.getString("codicefiscale");
-                           UserSession.setSession(SendInfoActivity.this, cfUtente, sessionId);
+                           int pastiAddebitati = objResponse.getInt("pastiaddebitati");
+
+                           UserSession.setSession(SendInfoActivity.this, cfUtente, sessionId, pastiAddebitati);
                            Toast.makeText(getApplicationContext(), cfUtente+sessionId, Toast.LENGTH_LONG).show();
                         intent = new Intent(SendInfoActivity.this, HomeActivity.class);
                         startActivity(intent.addFlags(NEW_ACTIVITY_ON_TOP));
