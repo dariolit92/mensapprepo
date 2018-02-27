@@ -4,6 +4,19 @@
     android:layout_height="match_parent"
     android:divider="@android:color/holo_red_dark"
     android:orientation="vertical"
-    >
+    android:paddingTop="@dimen/activity_vertical_margin"
+    android:weightSum="1">
+
+
+
+
+    <ListView
+        android:id="@+id/listView1"
+        android:layout_width="match_parent"
+        android:layout_height="384dp"
+        android:divider="@android:color/holo_red_dark"
+        android:dividerHeight="1dp"
+        android:scrollbarStyle="outsideInset"
+        android:layout_weight="0.81" />
 
 </LinearLayout>

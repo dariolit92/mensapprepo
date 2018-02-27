@@ -6,7 +6,12 @@
     android:orientation="vertical"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:weightSum="1">
-
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="37dp"
+        android:text="Prenota il tuo pasto di oggi a mensa!"
+        android:layout_gravity="center"
+        android:textSize="20sp"/>
     <LinearLayout
         android:id="@+id/filtri"
         android:layout_width="wrap_content"
@@ -39,7 +44,7 @@
         <ListView
             android:id="@+id/listView1"
             android:layout_width="match_parent"
-            android:layout_height="417dp"
+            android:layout_height="384dp"
             android:divider="@android:color/holo_red_dark"
             android:dividerHeight="1dp"
             android:scrollbarStyle="outsideInset" />

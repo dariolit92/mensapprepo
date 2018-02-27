@@ -9,17 +9,28 @@ public class Piatto {
 private String nome;
     private String tipoPiatto;
 private int idPasto;
+    private String tipoPasto;
+
     private String mensa;
 
     private String dataPiatto;
 
-    public Piatto(int id, String nome, String tipoPiatto, int idPasto, String mensa, String dataPiatto) {
+    public Piatto(int id, String nome, String tipoPiatto, int idPasto,String tipPasto, String mensa, String dataPiatto) {
         this.id = id;
         this.nome = nome;
         this.tipoPiatto = tipoPiatto;
         this.idPasto = idPasto;
         this.mensa = mensa;
         this.dataPiatto = dataPiatto;
+        this.tipoPasto=tipPasto;
+    }
+
+    public String getTipoPasto() {
+        return tipoPasto;
+    }
+
+    public void setTipoPasto(String tipoPasto) {
+        this.tipoPasto = tipoPasto;
     }
 
     public int getIdPasto() {

@@ -27,7 +27,7 @@ public final class UserSession {
     private static String codiceFiscaleUtente;
     private static String sessionID;
     private static int pastiAddebitati;
-
+    private static int counter;
 
     /*
      * Costruttore privato così può essere invocato solo tramite il metodo setSession
@@ -37,6 +37,16 @@ public final class UserSession {
         codiceFiscaleUtente = user;
         sessionID = session;
         pastiAddebitati=pasti;
+    }
+
+    public static int getCounter() {
+        return counter;
+    }
+    public static void resetCounter() {
+        UserSession.counter=0 ;
+    }
+    public static void incrementCounter() {
+      ++UserSession.counter ;
     }
 
     public static List<Piatto> getPrimiPiatti() {
@@ -87,9 +97,10 @@ public final class UserSession {
         UserSession.dessert = dessert;
     }
 
+
     /*
-             * Il metodo isActiveSession verifica se c'è un'istanza di sessione nella memoria persistente.
-             */
+                 * Il metodo isActiveSession verifica se c'è un'istanza di sessione nella memoria persistente.
+                 */
     public static boolean isActiveSession(Context c) {
         if (codiceFiscaleUtente != null && sessionID != null ) return true;
         SharedPreferences pref = c.getSharedPreferences(PREFER_NAME, Context.MODE_PRIVATE);
