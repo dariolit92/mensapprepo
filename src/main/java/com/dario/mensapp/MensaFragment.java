@@ -33,15 +33,17 @@ import java.util.List;
 import java.util.Locale;
 
 public class MensaFragment extends Fragment {
-    public List<String> listaMense;
+    public List<Mensa> listaMense;
+    private ListView mialista;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_mensa, container, false);
+        mialista = (ListView) rootView.findViewById(R.id.listViewMensa);
 
 
-        listaMense=new LinkedList<String>();
+        listaMense=new LinkedList<Mensa>();
         new GetMense().execute(new HttpCalls());
 
         return rootView;
@@ -62,6 +64,7 @@ public class MensaFragment extends Fragment {
         @Override
         protected void onPostExecute(String output) {
             try {
+
                 JSONArray jsonArray = new JSONArray(output);
 
 
@@ -70,27 +73,40 @@ public class MensaFragment extends Fragment {
 
                 String indirizzo;
                 String citta;
-
+int numeroPosti;
 String orarioAperturaCena;
                 String orarioAperturaPranzo;
+                String orarioChiusuraCena;
+                String orarioChiusuraPranzo;
 
                 for (int i = 0; i < jsonArray.length(); i++) {
 
                     jsonObject = jsonArray.getJSONObject(i);
-                    indirizzo = jsonObject.getString("Indirizzo");
-                 if(!   jsonObject.isNull("OrarioAperturaCena")){
-                     orarioAperturaCena= jsonObject.getString("OrarioAperturaCena");
-                    }
+                        indirizzo= jsonObject.getString("Indirizzo");
+                  orarioAperturaCena= jsonObject.getString("OrarioAperturaCena");
 
-                    if(!   jsonObject.isNull("OrarioAperturaPranzo")){
+
                         orarioAperturaPranzo= jsonObject.getString("OrarioAperturaPranzo");
-                    }
-                    citta = jsonObject.getString("Citta");
-                    listaMense.add(indirizzo+","+citta);
+
+                        orarioChiusuraCena= jsonObject.getString("OrarioChiusuraCena");
+
+
+                        orarioChiusuraPranzo= jsonObject.getString("OrarioChiusuraPranzo");
+
+                        numeroPosti= jsonObject.getInt("NumeroPosti");
+
+                        citta= jsonObject.getString("Citta");
+
+                    Mensa mensa= new Mensa(indirizzo, citta,numeroPosti,orarioAperturaCena,orarioAperturaPranzo,
+                            orarioChiusuraCena,orarioChiusuraPranzo );
+                    listaMense.add(mensa);
+
 
                 }
+        MensaAdapter adapterMensa = new MensaAdapter(getActivity(), R.layout.preview_mensa, listaMense);
 
 
+               mialista.setAdapter(adapterMensa);
 
 
             } catch (Exception e) {

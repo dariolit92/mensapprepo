@@ -24,7 +24,7 @@
         android:layout_marginLeft="@dimen/activity_horizontal_margin"
         android:text="Nome"
         android:textColor="@color/black"
-        android:textSize="@dimen/preview_dog_field_size"
+        android:textSize="@dimen/preview_field_size"
         android:layout_alignParentTop="true"
         android:layout_toEndOf="@+id/tipoPiattoView"
         android:layout_marginStart="47dp" />
@@ -35,7 +35,7 @@
         android:layout_height="wrap_content"
         android:text="Piatto"
         android:textColor="@android:color/holo_red_dark"
-        android:textSize="@dimen/preview_dog_field_size"
+        android:textSize="@dimen/preview_field_size"
         android:layout_marginStart="13dp"
         android:layout_alignBaseline="@+id/nomePiattoView"
         android:layout_alignBottom="@+id/nomePiattoView"
