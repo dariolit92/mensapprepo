@@ -64,8 +64,9 @@ public class HomeActivity extends FragmentActivity {
         navDrawerItems.add(new NavDrawerItem(navMenuTitles[0], navMenuIcons.getResourceId(0, -1)));
         navDrawerItems.add(new NavDrawerItem(navMenuTitles[1], navMenuIcons.getResourceId(1, -1)));
         navDrawerItems.add(new NavDrawerItem(navMenuTitles[2], navMenuIcons.getResourceId(2, -1)));
-
         navDrawerItems.add(new NavDrawerItem(navMenuTitles[3], navMenuIcons.getResourceId(3, -1)));
+
+        navDrawerItems.add(new NavDrawerItem(navMenuTitles[4], navMenuIcons.getResourceId(4, -1)));
 
         // Recycle the typed array
         navMenuIcons.recycle();
@@ -131,9 +132,12 @@ public class HomeActivity extends FragmentActivity {
                 fragment = new ProfiloUtenteFragment();
                 break;
             case 2:
+                fragment = new PrenotazioniFragment();
+                break;
+            case 3:
                 fragment = new MensaFragment();
                 break;
-            case 3: // Logout item
+            case 4: // Logout item
                 logout();
                 return;
         }

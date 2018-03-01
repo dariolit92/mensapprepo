@@ -24,7 +24,7 @@
             android:layout_below="@+id/indirizzoView"
             android:layout_marginLeft="@dimen/activity_horizontal_margin"
             android:layout_marginTop="11dp"
-            android:text="Info"
+            android:text=""
             android:textColor="@color/black"
             android:textSize="@dimen/preview_field_size" />
 

@@ -25,6 +25,7 @@
     <array name="nav_drawer_icons">
         <item>@drawable/ic_home</item>
         <item>@drawable/ic_utente</item>
+        <item>@drawable/ic_prenotazioni</item>
         <item>@drawable/ic_mensa</item>
         <item>@drawable/ic_esci</item>
     </array>
@@ -33,6 +34,7 @@
     <string-array name="nav_drawer_items">
         <item>Home</item>
         <item>Profilo Utente</item>
+        <item>Prenotazioni</item>
         <item>Mense</item>
         <item>Logout</item>
     </string-array>

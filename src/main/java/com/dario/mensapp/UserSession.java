@@ -16,7 +16,6 @@ public final class UserSession {
     private static final String PREFER_NAME = "SessionManager";
     private static final String USER = "user";
     private static final String SESSION = "session";
-    private static final String PASTIADDEBITATI = "pastiaddebitati";
 
     private static List<Piatto> primiPiatti;
     private static List<Piatto> secondiPiatti;
@@ -26,17 +25,15 @@ public final class UserSession {
 
     private static String codiceFiscaleUtente;
     private static String sessionID;
-    private static int pastiAddebitati;
     private static int counter;
 
     /*
      * Costruttore privato così può essere invocato solo tramite il metodo setSession
      * che, per costruzione, può creare una sola sessione per volta.
      */
-    private UserSession(String user, String session, int pasti) {
+    private UserSession(String user, String session) {
         codiceFiscaleUtente = user;
         sessionID = session;
-        pastiAddebitati=pasti;
     }
 
     public static int getCounter() {
@@ -69,13 +66,7 @@ public final class UserSession {
         return piattiOrdinati;
     }
 
-    public static int getPastiAddebitati() {
-        return pastiAddebitati;
-    }
 
-    public static void setPastiAddebitati(int pastiAddebitati) {
-        UserSession.pastiAddebitati = pastiAddebitati;
-    }
 
     public static void setPiattiOrdinati(List<Piatto> piattiOrdinati) {
         UserSession.piattiOrdinati = piattiOrdinati;
@@ -112,14 +103,13 @@ public final class UserSession {
     /*
      * Il metodo setSession istanzia una nuova sessione solo se non esiste già un'istanza.
      */
-    public static void setSession(Context c, String user,  String session, int pasti) {
+    public static void setSession(Context c, String user,  String session) {
         if (codiceFiscaleUtente != null || sessionID != null  || user == null || session == null ) return;
 
-        new UserSession(user, session,pasti);
+        new UserSession(user, session);
         SharedPreferences.Editor editor = c.getSharedPreferences(PREFER_NAME, Context.MODE_PRIVATE).edit();
         editor.putString(USER, user);
         editor.putString(SESSION, session);
-        editor.putInt(PASTIADDEBITATI, pasti);
 
         editor.apply();
     }
@@ -128,7 +118,7 @@ public final class UserSession {
      * Il metodo expire fa scadere una sessione.
      */
     public static void expireSession(Context c) {
-        new UserSession(null,null,0);
+        new UserSession(null,null);
         SharedPreferences.Editor editor = c.getSharedPreferences(PREFER_NAME, Context.MODE_PRIVATE).edit();
         editor.clear();
         editor.apply();
