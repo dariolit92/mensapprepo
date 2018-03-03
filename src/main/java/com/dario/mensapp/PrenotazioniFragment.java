@@ -1,6 +1,7 @@
 package com.dario.mensapp;
 
 import android.content.Intent;
+import android.media.Image;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
@@ -33,10 +34,11 @@ import java.util.Date;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Locale;
+import java.util.concurrent.TimeUnit;
 
 public class PrenotazioniFragment extends Fragment {
     public List<Mensa> listaMense;
-    private ListView mialista;
+    public static ListView mialista;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
@@ -76,47 +78,58 @@ public class PrenotazioniFragment extends Fragment {
         }
 
         @Override
-        protected void onPostExecute(String output) {
+        protected void onPostExecute(final String output) {
             try {
-
+                mialista.setAdapter(null);
                 JSONArray jsonArray;
                 JSONObject objApp;
+                Toast.makeText(getActivity(), output, Toast.LENGTH_SHORT).show();
+                List<Prenotazione> listaPrenotazioni = new LinkedList<>();
 
                 if (output.equals("")) {
                     jsonArray = new JSONArray();
                 } else {
-                    jsonArray = new JSONArray(output);
-                    for (int i = 0; i < jsonArray.length(); i++) {
-                        objApp = jsonArray.getJSONObject(i);
+                    JSONArray array = new JSONArray(output);
+
+                    jsonArray = new JSONArray();
+
+                    for (int i = 0; i < array.length(); i++) {
+                        objApp = array.getJSONObject(i);
 
                         String dataGiaOrdinato = objApp.getString("dataprenotazione").split(" ")[0];
 
                         DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ITALY);
                         Date date = new Date();
                         String dataInput = dateFormat.format(date);
-                        if (!dataGiaOrdinato.equals(dataInput)) {
-                            jsonArray.remove(i);
+                        if (dataGiaOrdinato.equals(dataInput)) {
+
+                            jsonArray.put(objApp);
                         }
                     }
                 }
+
                 String dataprenotazione;
                 String mensa;
                 String tipoPasto;
-List<String> listaPrenotazioni= new LinkedList<>();
+                int idPasto;
+                String idPiatti;
                 for (int i = 0; i < jsonArray.length(); i++) {
-                    objApp = jsonArray.getJSONObject(i);
-                     mensa=objApp.getString("mensa");
-                    tipoPasto=objApp.getString("tipopasto");
-                    String s=objApp.getString("dataprenotazione").split(" ")[0];
-                    String y=s.split("-")[0];
-                            String m=s.split("-")[1];
-                            String g=s.split("-")[2];
 
-                            dataprenotazione=g+"-"+m+"-"+y+" " +objApp.getString("dataprenotazione").split(" ")[1];
-                    listaPrenotazioni.add(tipoPasto.toUpperCase()+"\n"+
-                    "Mensa: "+mensa+"\n"+"Data di prenotazione: "+dataprenotazione);
+                    objApp = jsonArray.getJSONObject(i);
+                    mensa = objApp.getString("mensa");
+                    tipoPasto = objApp.getString("tipopasto");
+                    String s = objApp.getString("dataprenotazione").split(" ")[0];
+                    String y = s.split("-")[0];
+                    String m = s.split("-")[1];
+                    String g = s.split("-")[2];
+
+                    dataprenotazione = g + "-" + m + "-" + y + " " + objApp.getString("dataprenotazione").split(" ")[1];
+                    idPasto = objApp.getInt("idpasto");
+                    idPiatti = objApp.getString("idpiatti");
+                    Prenotazione p = new Prenotazione(idPasto, dataprenotazione, mensa, tipoPasto, idPiatti);
+                    listaPrenotazioni.add(p);
                 }
-                PrenotazioniAdapter adapter = new PrenotazioniAdapter
+                final PrenotazioniAdapter adapter = new PrenotazioniAdapter
                         (getActivity(), R.layout.preview_prenotazione, listaPrenotazioni);
 
 
@@ -125,6 +138,7 @@ List<String> listaPrenotazioni= new LinkedList<>();
                 ex.printStackTrace();
             }
         }
+
 
     }
 }

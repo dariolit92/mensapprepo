@@ -58,7 +58,7 @@ public class SendInfoActivity extends Activity {
         protected void onPostExecute(String output) {
 
             try {
-if(output.equals("Timeout connessione!")|| output.equals(HttpCalls.CONNECTION_FAILED)){
+if(output.equals(HttpCalls.CONNECTION_FAILED)|| output.equals(HttpCalls.CONNECTION_FAILED)){
     finish();
     Toast.makeText(SendInfoActivity.this, output, Toast.LENGTH_SHORT).show();
 }
@@ -67,7 +67,7 @@ if(output.equals("Timeout connessione!")|| output.equals(HttpCalls.CONNECTION_FA
                 if(objResponse.has("error") ){
                     Toast.makeText(getApplicationContext(), objResponse.getString("error"), Toast.LENGTH_LONG).show();
                     UserSession.expireSession(SendInfoActivity.this);
-                    intent = new Intent(SendInfoActivity.this, MainActivity.class);
+                    intent = new Intent(SendInfoActivity.this, LoginActivity.class);
                     startActivity(intent.addFlags(NEW_ACTIVITY_ON_TOP));
                 }else {
                     String response=objResponse.getString("response");
