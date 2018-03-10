@@ -4,7 +4,7 @@
     android:id="@+id/id"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/red"
+    android:background="@android:color/holo_red_dark"
     android:orientation="vertical"
     android:weightSum="1"
     tools:context=".MainActivity">
@@ -16,21 +16,21 @@
         android:layout_gravity="center"
         android:layout_marginTop="5dp"
         android:text="Registrazione"
-        android:textSize="25dp" />
+        android:textSize="22sp" />
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="55dp"
+        android:layout_height="47dp"
         android:orientation="horizontal">
 
         <TextView
+            android:id="@+id/textView"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Email:"
-            android:textSize="20dp"
             android:layout_alignParentBottom="true"
-            android:id="@+id/textView"
-            android:layout_alignTop="@+id/email" />
+            android:layout_alignTop="@+id/email"
+            android:text="Email:"
+            android:textSize="20dp" />
 
         <EditText
             android:id="@+id/email"
@@ -38,25 +38,26 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_marginLeft="10dp"
+            android:layout_toEndOf="@+id/textView"
             android:inputType="textEmailAddress"
-            android:maxLength="30"
-            android:layout_toEndOf="@+id/textView" />
+            android:maxLength="30" />
     </RelativeLayout>
 
     <View style="@style/Divider" />
+
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="55dp"
+        android:layout_height="47dp"
         android:orientation="horizontal">
 
         <TextView
+            android:id="@+id/textView2"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Password:"
-            android:textSize="20dp"
             android:layout_alignParentBottom="true"
-            android:id="@+id/textView2"
-            android:layout_alignTop="@+id/password" />
+            android:layout_alignTop="@+id/password"
+            android:text="Password:"
+            android:textSize="20dp" />
 
         <EditText
             android:id="@+id/password"
@@ -64,24 +65,25 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_marginLeft="10dp"
-            android:maxLength="30"
+            android:layout_toEndOf="@+id/textView2"
+            android:hint="min 8 caratteri max 16"
             android:inputType="textPassword"
-android:hint="min 8 caratteri max 16"
-            android:layout_toEndOf="@+id/textView2" />
+            android:maxLength="30" />
     </RelativeLayout>
+
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="55dp"
+        android:layout_height="47dp"
         android:orientation="horizontal">
 
         <TextView
+            android:id="@+id/textView9"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Conferma \n Password:"
-            android:textSize="17dp"
             android:layout_alignParentBottom="true"
-            android:id="@+id/textView9"
-            android:layout_alignTop="@+id/confirmpassword" />
+            android:layout_alignTop="@+id/confirmpassword"
+            android:text="Conferma \n Password:"
+            android:textSize="17dp" />
 
         <EditText
             android:id="@+id/confirmpassword"
@@ -89,27 +91,27 @@ android:hint="min 8 caratteri max 16"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_marginLeft="10dp"
-            android:maxLength="30"
-            android:inputType="textPassword"
+            android:layout_toEndOf="@+id/textView9"
             android:hint="min 8 caratteri max 16"
-            android:layout_toEndOf="@+id/textView9" />
+            android:inputType="textPassword"
+            android:maxLength="30" />
     </RelativeLayout>
 
     <View style="@style/Divider" />
 
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="55dp"
+        android:layout_height="47dp"
         android:orientation="horizontal">
 
         <TextView
+            android:id="@+id/textView3"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="CodiceFiscale:"
-            android:textSize="17dp"
             android:layout_alignParentBottom="true"
-            android:id="@+id/textView3"
-            android:layout_alignTop="@+id/codicefiscale" />
+            android:layout_alignTop="@+id/codicefiscale"
+            android:text="CodiceFiscale:"
+            android:textSize="17dp" />
 
         <EditText
             android:id="@+id/codicefiscale"
@@ -117,26 +119,27 @@ android:hint="min 8 caratteri max 16"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_marginLeft="10dp"
-            android:maxLength="30"
-            android:inputType="textPersonName"
+            android:layout_toEndOf="@+id/textView3"
             android:hint="esattamente 16 caratteri"
-            android:layout_toEndOf="@+id/textView3" />
+            android:inputType="textPersonName"
+            android:maxLength="30" />
     </RelativeLayout>
 
     <View style="@style/Divider" />
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="47dp"
         android:orientation="horizontal">
 
         <TextView
+            android:id="@+id/textView4"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Fascia Isee:"
-            android:textSize="20dp"
             android:layout_alignParentBottom="true"
-            android:id="@+id/textView4"
-            android:layout_alignTop="@+id/fasciaisee" />
+            android:layout_alignTop="@+id/fasciaisee"
+            android:text="Fascia Isee:"
+            android:textSize="20dp" />
 
         <Spinner
             android:id="@+id/fasciaisee"
@@ -148,19 +151,20 @@ android:hint="min 8 caratteri max 16"
     </RelativeLayout>
 
     <View style="@style/Divider" />
+
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="55dp"
+        android:layout_height="47dp"
         android:orientation="horizontal">
 
         <TextView
+            android:id="@+id/textView5"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Città di Residenza:"
-            android:textSize="20dp"
             android:layout_alignParentBottom="true"
-            android:id="@+id/textView5"
-            android:layout_alignTop="@+id/citta" />
+            android:layout_alignTop="@+id/citta"
+            android:text="Città di Residenza:"
+            android:textSize="20dp" />
 
         <EditText
             android:id="@+id/citta"
@@ -168,25 +172,26 @@ android:hint="min 8 caratteri max 16"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_marginLeft="10dp"
-            android:maxLength="30"
+            android:layout_toEndOf="@+id/textView5"
             android:inputType="textPersonName"
-            android:layout_toEndOf="@+id/textView5" />
+            android:maxLength="30" />
     </RelativeLayout>
 
     <View style="@style/Divider" />
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="47dp"
         android:orientation="horizontal">
 
         <TextView
+            android:id="@+id/textView6"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Università:"
-            android:textSize="20dp"
             android:layout_alignParentBottom="true"
-            android:id="@+id/textView6"
-            android:layout_alignTop="@+id/universita" />
+            android:layout_alignTop="@+id/universita"
+            android:text="Università:"
+            android:textSize="20dp" />
 
         <Spinner
             android:id="@+id/universita"
@@ -198,19 +203,20 @@ android:hint="min 8 caratteri max 16"
     </RelativeLayout>
 
     <View style="@style/Divider" />
+
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="47dp"
         android:orientation="horizontal">
 
         <TextView
+            android:id="@+id/textView7"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Facoltà:"
-            android:textSize="20dp"
             android:layout_alignParentBottom="true"
-            android:id="@+id/textView7"
-            android:layout_alignTop="@+id/facolta" />
+            android:layout_alignTop="@+id/facolta"
+            android:text="Facoltà:"
+            android:textSize="20dp" />
 
         <EditText
             android:id="@+id/facolta"
@@ -218,25 +224,26 @@ android:hint="min 8 caratteri max 16"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_marginLeft="10dp"
-            android:maxLength="30"
+            android:layout_toEndOf="@+id/textView7"
             android:inputType="textPersonName"
-            android:layout_toEndOf="@+id/textView7" />
+            android:maxLength="30" />
     </RelativeLayout>
 
     <View style="@style/Divider" />
+
     <RelativeLayout
         android:layout_width="match_parent"
-        android:layout_height="47dp"
+        android:layout_height="43dp"
         android:orientation="horizontal">
 
         <TextView
+            android:id="@+id/textView8"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="Dipartimento:"
-            android:textSize="20dp"
             android:layout_alignParentBottom="true"
-            android:id="@+id/textView8"
-            android:layout_alignTop="@+id/dipartimento" />
+            android:layout_alignTop="@+id/dipartimento"
+            android:text="Dipartimento:"
+            android:textSize="20dp" />
 
         <EditText
             android:id="@+id/dipartimento"
@@ -244,19 +251,20 @@ android:hint="min 8 caratteri max 16"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_marginLeft="10dp"
-            android:maxLength="30"
+            android:layout_toEndOf="@+id/textView8"
             android:inputType="textPersonName"
-            android:layout_toEndOf="@+id/textView8" />
+            android:maxLength="30" />
     </RelativeLayout>
 
     <View style="@style/Divider" />
+
     <ImageButton
         android:id="@+id/registrazione"
         android:layout_width="219dp"
         android:layout_height="40dp"
         android:layout_gravity="center"
         android:layout_marginTop="10dp"
-        android:background="@drawable/registrazione"/>
+        android:background="@drawable/registrazione" />
 
 
 </LinearLayout>

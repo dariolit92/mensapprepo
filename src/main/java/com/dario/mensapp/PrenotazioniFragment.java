@@ -83,13 +83,19 @@ public class PrenotazioniFragment extends Fragment {
                 mialista.setAdapter(null);
                 JSONArray jsonArray;
                 JSONObject objApp;
-                Toast.makeText(getActivity(), output, Toast.LENGTH_SHORT).show();
                 List<Prenotazione> listaPrenotazioni = new LinkedList<>();
 
                 if (output.equals("")) {
                     jsonArray = new JSONArray();
                 } else {
+
                     JSONArray array = new JSONArray(output);
+
+                    if(array.getJSONObject(0).has("error") ){
+                        Toast.makeText(getActivity(),array.getJSONObject(0).getString("error"), Toast.LENGTH_SHORT).show();
+                        return;
+                    }
+
 
                     jsonArray = new JSONArray();
 

@@ -81,6 +81,15 @@ if(output.equals(HttpCalls.CONNECTION_FAILED)|| output.equals(HttpCalls.CONNECTI
                         intent = new Intent(SendInfoActivity.this, HomeActivity.class);
                         startActivity(intent.addFlags(NEW_ACTIVITY_ON_TOP));
                            break;
+                       case "register":
+                           String sessionIdReg = objResponse.getString("sessionid");
+                           String cfUtenteReg = objResponse.getString("codicefiscale");
+
+                           UserSession.setSession(SendInfoActivity.this, cfUtenteReg, sessionIdReg);
+                           Toast.makeText(getApplicationContext(), cfUtenteReg+sessionIdReg, Toast.LENGTH_LONG).show();
+                           intent = new Intent(SendInfoActivity.this, HomeActivity.class);
+                           startActivity(intent.addFlags(NEW_ACTIVITY_ON_TOP));
+                           break;
                        case "logout":
                         UserSession.expireSession(SendInfoActivity.this);
                         intent = new Intent(SendInfoActivity.this, MainActivity.class);

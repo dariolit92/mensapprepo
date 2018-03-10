@@ -230,14 +230,6 @@ public class HomeActivity extends FragmentActivity {
     }
     }
 
-    private void getPreferiti() {
-        Intent wait = new Intent(this, SendInfoActivity.class);
-        Map<String, String> params = new HashMap<>();
-        params.put("userid", UserSession.getUserID());
-        params.put("sessionid", UserSession.getSessionID());
-        wait.putExtra("query", "getpreferiti.php");
-        wait.putExtra("params", (Serializable) params);
-        startActivity(wait);
-    }
+
 
 }

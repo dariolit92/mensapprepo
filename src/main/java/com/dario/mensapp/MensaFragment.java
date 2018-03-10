@@ -66,7 +66,10 @@ public class MensaFragment extends Fragment {
             try {
 
                 JSONArray jsonArray = new JSONArray(output);
-
+                if(jsonArray.getJSONObject(0).has("error")){
+                    Toast.makeText(getActivity(),jsonArray.getJSONObject(0).getString("error"), Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
                 JSONObject jsonObject;
 

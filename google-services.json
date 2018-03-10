@@ -1,0 +1,40 @@
+{
+  "project_info": {
+    "project_number": "164563496568",
+    "project_id": "firebase-mensapp"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:164563496568:android:211fdf5b6216182a",
+        "android_client_info": {
+          "package_name": "com.dario.mensapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "164563496568-u3rn9llf7tu2q6paq3471sgqhf19ig3f.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyAQZp7RVoS3BxmoAFQPTkslImOt_AlHTW8"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 1
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

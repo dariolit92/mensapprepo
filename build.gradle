@@ -1,5 +1,5 @@
 apply plugin: 'com.android.application'
-
+apply plugin: 'com.google.gms.google-services'
 android {
     compileSdkVersion 24
     buildToolsVersion "26.0.2"
@@ -22,6 +22,7 @@ android {
 }
 buildscript {
     repositories {
+        jcenter()
         mavenCentral()
     }
 }
@@ -30,7 +31,6 @@ buildscript {
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    compile group: 'com.facebook.android', name: 'facebook-android-sdk', version: '3.19.0'
     androidTestCompile('com.android.support.test.espresso:espresso-core:2.2.2', {
         exclude group: 'com.android.support', module: 'support-annotations'
     })
@@ -38,4 +38,6 @@ dependencies {
     compile 'com.android.support:appcompat-v7:24.2.1'
     compile 'com.android.support.constraint:constraint-layout:1.0.2'
     testCompile 'junit:junit:4.12'
+    compile 'com.facebook.android:facebook-android-sdk:4.0.0'
+compile 'com.google.android.gms:play-services:8.3.0'
 }

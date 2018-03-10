@@ -3,6 +3,7 @@ package com.dario.mensapp;
         import android.app.Activity;
         import android.app.Application;
         import android.app.ProgressDialog;
+        import android.content.Context;
         import android.content.Intent;
         import android.content.pm.PackageInfo;
         import android.content.pm.PackageManager;
@@ -14,12 +15,22 @@ package com.dario.mensapp;
         import android.view.View;
         import android.widget.ImageButton;
         import android.widget.Toast;
+        import com.facebook.CallbackManager;
+ ;
+        import com.facebook.FacebookException;
+        import android.app.Activity;
+        import android.content.Intent;
+        import android.os.Bundle;
+        import android.widget.TextView;
 
-        import com.facebook.Session;
-        import com.facebook.SessionState;
-        import com.facebook.UiLifecycleHelper;
-        import com.facebook.model.GraphUser;
-        import com.facebook.widget.LoginButton;
+        import com.facebook.CallbackManager;
+        import com.facebook.FacebookCallback;
+        import com.facebook.FacebookException;
+        import com.facebook.FacebookSdk;
+        import com.facebook.GraphRequest;
+        import com.facebook.GraphResponse;
+        import com.facebook.login.LoginResult;
+        import com.facebook.login.widget.LoginButton;
 
         import org.apache.http.HttpEntity;
         import org.apache.http.HttpResponse;
@@ -27,8 +38,9 @@ package com.dario.mensapp;
         import org.apache.http.entity.BufferedHttpEntity;
         import org.apache.http.impl.client.DefaultHttpClient;
         import org.json.JSONArray;
+        import org.json.JSONException;
         import org.json.JSONObject;
-
+import com.facebook.login.widget.LoginButton;
         import java.io.BufferedReader;
         import java.io.InputStream;
         import java.io.InputStreamReader;
@@ -42,7 +54,8 @@ package com.dario.mensapp;
         import java.util.Map;
         import java.util.concurrent.ExecutionException;
 public class MainActivity extends Activity {
-    private UiLifecycleHelper uiHelper;
+    private CallbackManager callbackManager;
+    private  com.facebook.login.widget.LoginButton fbLoginButton;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -56,20 +69,18 @@ public class MainActivity extends Activity {
             finish();
             return;
         }
+        FacebookSdk.sdkInitialize(getApplicationContext());
 
         setContentView(R.layout.activity_main);
-
         final ImageButton loginButton = (ImageButton) findViewById(R.id.login);
         final ImageButton registerButton = (ImageButton) findViewById(R.id.registrazione);
-        final LoginButton fbLoginButton = (LoginButton) findViewById(R.id.loginFacebook);
+        fbLoginButton = (com.facebook.login.widget.LoginButton) findViewById(R.id.loginFacebook);
 
-        uiHelper = new UiLifecycleHelper(this, new Session.StatusCallback() {
-            @Override
-            public void call(Session session, SessionState state, Exception exception) {
-            }
-        });
 
-        fbLoginButton.setReadPermissions(Arrays.asList("public_profile", "email", "user_birthday"));
+
+        callbackManager = CallbackManager.Factory.create();
+
+
 
         loginButton.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -88,76 +99,68 @@ public class MainActivity extends Activity {
         });
 
 
-        fbLoginButton.setUserInfoChangedCallback(new LoginButton.UserInfoChangedCallback() {
+        fbLoginButton.registerCallback(callbackManager, new FacebookCallback<LoginResult>() {
             @Override
-            public void onUserInfoFetched(GraphUser user) {
-                if (user != null) {
-                    String email = (String) user.getProperty("email");
-                    Toast.makeText(getApplicationContext(), email, Toast.LENGTH_LONG).show();
-                    if (alreadyRegistered(email)) {
-                        Map<String, String> params = new HashMap<>();
-                        params.put("username", email);
-                        params.put("password", user.getId());
+            public void onSuccess(LoginResult loginResult) {
 
-                        Intent wait = new Intent(MainActivity.this, SendInfoActivity.class);
+                GraphRequest request =  GraphRequest.newMeRequest(
+                        loginResult.getAccessToken(), new GraphRequest.GraphJSONObjectCallback() {
+                            @Override
+                            public void onCompleted(JSONObject me, GraphResponse response) {
 
-                        wait.putExtra("query", "login.php");
-                        wait.putExtra("params", (Serializable) params);
-                        startActivity(wait);
-                    } else {
-                        Intent intent = new Intent(MainActivity.this, RegisterActivity.class);
-                        intent.putExtra("isRegisterWithFacebook", true);
-                        intent.putExtra("firstName", user.getFirstName());
-                        intent.putExtra("lastName", user.getLastName());
-                        intent.putExtra("email", email);
-                        intent.putExtra("id", user.getId());
-                        intent.putExtra("birthday", user.getBirthday());
-                        startActivity(intent);
-                    }
-                    Session session = new Session(getApplicationContext());
-                    Session.setActiveSession(session);
-                    session.closeAndClearTokenInformation();
-                }
+                                if (response.getError() != null) {
+                                    // handle error
+                                } else {
+
+                                    String user_email =response.getJSONObject().optString("email");
+                                    String id =response.getJSONObject().optString("id");
+
+                                    try {
+                                        Context context = getApplicationContext();
+
+                                        Toast.makeText(getApplicationContext(),user_email+id,Toast.LENGTH_SHORT).show();
+
+
+
+                                        JSONObject params = new JSONObject();
+                                        params.put("email", user_email);
+
+                                        Intent wait = new Intent(context, SendInfoActivity.class);
+                                        wait.putExtra("query", "loginFacebook.php");
+                                        wait.putExtra("params",  params.toString());
+                                        startActivity(wait);
+                                    }catch (JSONException e){
+                                        e.printStackTrace();
+                                    }
+                                }
+                            }
+                        });
+
+
+                Bundle parameters = new Bundle();
+                parameters.putString("fields", "id,email");
+                request.setParameters(parameters);
+                request.executeAsync();
+            }
+
+            @Override
+            public void onCancel() {
+
+            }
+
+            @Override
+            public void onError(FacebookException e) {
+
             }
         });
     }
 
     @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent data) {
-        uiHelper.onActivityResult(requestCode, resultCode, data);
+    protected void onActivityResult(int requestCode, int resultCode, Intent data) {
+        super.onActivityResult(requestCode, resultCode, data);
+        callbackManager.onActivityResult(requestCode, resultCode, data);
     }
 
-    private boolean alreadyRegistered(String email) {
-        CheckEmail ce = new CheckEmail(email);
-        ce.execute(new HttpCalls());
-        try {
-            JSONArray ja = new JSONArray(ce.get());
-            if (ja.getJSONObject(0).getString("output").equals("notavailable")) {
-                return true;
-            }
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return false;
-    }
 
-    private class CheckEmail extends AsyncTask<HttpCalls, Long, String> {
-        private String email;
-
-        private CheckEmail(String email) {
-            this.email = email;
-        }
-
-        @Override
-        protected String doInBackground(HttpCalls... params) {
-            // eseguito in background
-
-                return params[0].getData(
-                        HttpCalls.DOMAIN
-                                + "/checkemail.php?email="
-                                + email);
-
-        }
-    }
 
 }

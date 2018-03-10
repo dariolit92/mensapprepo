@@ -4,7 +4,7 @@
     android:id="@+id/id"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:background="@color/red"
+    android:background="@android:color/holo_red_dark"
     android:orientation="vertical"
     android:weightSum="1"
     tools:context=".MainActivity">

@@ -121,15 +121,21 @@ public class HomeFragment extends Fragment {
         }
         @Override
         protected void onPostExecute(String output) {
-            bottoneRicerca.setVisibility(View.INVISIBLE);
+
 
             try {
 
-                Toast.makeText(getActivity(),output, Toast.LENGTH_SHORT).show();
 
                 JSONArray jsonArray= new JSONArray(output);
+                if(jsonArray.getJSONObject(0).has("error")){
+                    Toast.makeText(getActivity(),jsonArray.getJSONObject(0).getString("error"), Toast.LENGTH_SHORT).show();
+                    return;
+                }
+                Toast.makeText(getActivity(),output, Toast.LENGTH_SHORT).show();
+
                 List<String> listaPiatti = new LinkedList<>();
 
+                bottoneRicerca.setVisibility(View.INVISIBLE);
 
                 JSONObject jsonObject;
 
@@ -390,7 +396,7 @@ public class HomeFragment extends Fragment {
 }
 else{
     Toast.makeText(getActivity(), output, Toast.LENGTH_LONG).show();
-
+return;
 }
         }
     }
@@ -408,8 +414,10 @@ else{
         protected void onPostExecute(String output) {
             try {
                 JSONArray jsonArray = new JSONArray(output);
-
-
+                if(jsonArray.getJSONObject(0).has("error")){
+                    Toast.makeText(getActivity(),jsonArray.getJSONObject(0).getString("error"), Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 JSONObject jsonObject;
 
 
@@ -479,6 +487,10 @@ int posti;
                     jsonArray = new JSONArray();
                 }else {
                      jsonArray = new JSONArray(output);
+                    if(jsonArray.getJSONObject(0).has("error")){
+                        Toast.makeText(getActivity(),jsonArray.getJSONObject(0).getString("error"), Toast.LENGTH_SHORT).show();
+                        return;
+                    }
                     for(int i=0; i<jsonArray.length();i++) {
                         objApp=jsonArray.getJSONObject(i);
 

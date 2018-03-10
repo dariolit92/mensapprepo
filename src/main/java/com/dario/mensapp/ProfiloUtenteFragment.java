@@ -78,7 +78,10 @@ public TextView infoView;
 
 
                 JSONObject jsonObject= new JSONObject(output);
-
+                if(jsonObject.has("error")){
+                    Toast.makeText(getActivity(),jsonObject.getString("error"), Toast.LENGTH_SHORT).show();
+                    return;
+                }
 
                 String cf;
                 String email;
