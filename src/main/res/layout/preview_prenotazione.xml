@@ -16,14 +16,15 @@
         android:textColor="@color/black"
         android:textSize="@dimen/preview_field_size"
         android:layout_alignTop="@+id/deletePrenota" />
+
     <ImageButton
+        android:id="@+id/deletePrenota"
         android:layout_width="30dp"
-        android:layout_height="30dp"
-        android:background="@drawable/bottone_prenota"
-        android:layout_centerVertical="true"
+        android:layout_height="27dp"
         android:layout_alignParentEnd="true"
+        android:layout_centerVertical="true"
         android:layout_marginEnd="11dp"
-        android:id="@+id/deletePrenota" />
+        android:background="@drawable/bottone_delete" />
 
 
 </RelativeLayout>

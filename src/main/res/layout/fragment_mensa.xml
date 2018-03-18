@@ -8,7 +8,14 @@
     android:weightSum="1">
 
 
-
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="20dp"
+        android:layout_height="20dp"
+        android:layout_marginBottom="1dp"
+        android:layout_marginTop="1dp"
+        android:layout_gravity="center"
+        android:indeterminateTint="@android:color/holo_red_dark"/>
 
     <ListView
         android:id="@+id/listViewMensa"

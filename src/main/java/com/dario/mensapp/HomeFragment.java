@@ -16,6 +16,7 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -51,14 +52,18 @@ public class HomeFragment extends Fragment {
     public ImageButton buttonSalta;
     public ImageButton buttonPrenota;
     public ImageButton bottoneRicerca;
+    public ProgressBar progressBarView;
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
+
         listaMense=new ArrayList<String>();
         final View rootView = inflater.inflate(R.layout.fragment_home, container, false);
         mensa = (Spinner) rootView.findViewById(R.id.filtroMense);
         pasto = (Spinner) rootView.findViewById(R.id.filtroPasto);
           bottoneRicerca = (ImageButton) rootView.findViewById(R.id.ricerca);
+         progressBarView = (ProgressBar) rootView.findViewById(R.id.progressBar);
+        progressBarView.setVisibility(View.INVISIBLE);
         mialista = (ListView) rootView.findViewById(R.id.listView1);
         buttonSalta = (ImageButton) rootView.findViewById(R.id.buttonSalta);
         buttonPrenota = (ImageButton) rootView.findViewById(R.id.buttonPrenota);
@@ -69,38 +74,77 @@ public class HomeFragment extends Fragment {
         adapterPasto = ArrayAdapter.createFromResource(
                 getActivity(), R.array.tipopasto, android.R.layout.simple_spinner_dropdown_item);
         pasto.setAdapter(adapterPasto);
+        progressBarView.setVisibility(View.VISIBLE);
+
         new GetMense().execute(new HttpCalls());
 
+        try {
+            JSONObject objectInput = new JSONObject();
+            objectInput.put("codicefiscale", UserSession.getUserID());
+            objectInput.put("sessionid", UserSession.getSessionID());
+            progressBarView.setVisibility(View.VISIBLE);
 
+            new GetUtente(objectInput.toString()).execute(new HttpCalls());
+
+        }catch (JSONException ex){
+            ex.printStackTrace();
+        }
 
 
         bottoneRicerca.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                try {
+
                     menseParam = (String) mensa.getSelectedItem();
                     pastoParam = (String) pasto.getSelectedItem();
-                    if(menseParam.equals("[Seleziona mensa..]")||pastoParam.equals("[Seleziona pasto..]")){
-                        Toast.makeText(getActivity(), "Mensa e/o pasto non selezionati!", Toast.LENGTH_SHORT).show();
-                        bottoneRicerca.setVisibility(View.VISIBLE);
+                if(menseParam==null){
+                    Toast.makeText(getActivity(), "Mensa non selezionata!", Toast.LENGTH_SHORT).show();
+                    bottoneRicerca.setVisibility(View.VISIBLE);
+                    mensa.setSelection(0);
+                    pasto.setSelection(0);
 
+                    return;
+                }else
+                    if (menseParam.equals("[Seleziona mensa..]")) {
+                        Toast.makeText(getActivity(), "Mensa non selezionata!", Toast.LENGTH_SHORT).show();
+                        bottoneRicerca.setVisibility(View.VISIBLE);
+                        mensa.setSelection(0);
+                        pasto.setSelection(0);
 
                         return;
+                    } else if (pastoParam.equals("[Seleziona pasto..]")) {
+                        Toast.makeText(getActivity(), "Pasto non selezionato!", Toast.LENGTH_SHORT).show();
+                        bottoneRicerca.setVisibility(View.VISIBLE);
+                        mensa.setSelection(0);
+                        pasto.setSelection(0);
+
+                        return;
+                    } else if (pastoParam.equals("[Seleziona pasto..]") &&
+                            menseParam.equals("[Seleziona mensa..]")) {
+                        Toast.makeText(getActivity(), "Mensa e Pasto non selezionati!", Toast.LENGTH_SHORT).show();
+                        bottoneRicerca.setVisibility(View.VISIBLE);
+                        mensa.setSelection(0);
+                        pasto.setSelection(0);
+
+                        return;
+                    } else {
+
+                        try {
+                        DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ITALY);
+                        Date date = new Date();
+                        String dataPiatto = dateFormat.format(date);
+                        String indirizzo = menseParam.split(",")[0];
+                        JSONObject jsonObject = new JSONObject();
+                        jsonObject.put("mensa", indirizzo);
+                        jsonObject.put("datapiatto", dataPiatto);
+                        jsonObject.put("tipopasto", pastoParam.toLowerCase());
+                            progressBarView.setVisibility(View.VISIBLE);
+
+                            new GetPiattiInMensa(jsonObject.toString()).execute(new HttpCalls());
+                    }catch(JSONException e){
+                        e.printStackTrace();
+
                     }
-
-
-                    DateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd", Locale.ITALY);
-                    Date date = new Date();
-                    String dataPiatto=  dateFormat.format(date);
-                    String indirizzo= menseParam.split(",")[0];
-                    JSONObject jsonObject = new JSONObject();
-                    jsonObject.put("mensa", indirizzo);
-                    jsonObject.put("datapiatto", dataPiatto);
-                    jsonObject.put("tipopasto", pastoParam.toLowerCase());
-                    new GetPiattiInMensa(jsonObject.toString()).execute(new HttpCalls());
-                }catch (JSONException e){
-                    e.printStackTrace();
-
                 }
             }
         });
@@ -109,6 +153,54 @@ public class HomeFragment extends Fragment {
 
     }
 
+    private class GetUtente extends AsyncTask<HttpCalls, Long, String> {
+        private String paramInput;
+
+        private GetUtente(String param) {
+            this.paramInput = param;
+        }
+
+        @Override
+        protected String doInBackground(HttpCalls... params) {
+
+            return params[0].getData( HttpCalls.DOMAIN + "/getUtente.php?params="+paramInput);
+
+
+        }
+
+        @Override
+        protected void onPostExecute(String output) {
+            try {
+                progressBarView.setVisibility(View.INVISIBLE);
+
+
+
+                JSONObject jsonObject= new JSONObject(output);
+                if(jsonObject.has("error")){
+                    Toast.makeText(getActivity(),jsonObject.getString("error"), Toast.LENGTH_LONG).show();
+                    return;
+                }
+
+
+                String pastiAddebitati;
+
+
+
+
+                pastiAddebitati= jsonObject.getString("PastiAddebitati");
+                int p=Integer.parseInt(pastiAddebitati);
+if(p>=3){
+    Toast.makeText(getActivity(),"SERVIZIO DISABILITATO CAUSA 3 PASTI ADDEBITATI NON PAGATI, RIVOLGITI IN SEGRETERIA!", Toast.LENGTH_LONG).show();
+
+    bottoneRicerca.setVisibility(View.INVISIBLE);
+    return;
+}
+
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        }
+    }
     private class GetPiattiInMensa extends AsyncTask<HttpCalls, Long, String> {
         @Override
         protected String doInBackground(HttpCalls... params) {
@@ -125,13 +217,16 @@ public class HomeFragment extends Fragment {
 
             try {
 
-
+                progressBarView.setVisibility(View.INVISIBLE);
                 JSONArray jsonArray= new JSONArray(output);
+                if(jsonArray.length()==0){
+                    Toast.makeText(getActivity(),"Nessun pasto trovato!", Toast.LENGTH_SHORT).show();
+                    return;
+                }
                 if(jsonArray.getJSONObject(0).has("error")){
                     Toast.makeText(getActivity(),jsonArray.getJSONObject(0).getString("error"), Toast.LENGTH_SHORT).show();
                     return;
                 }
-                Toast.makeText(getActivity(),output, Toast.LENGTH_SHORT).show();
 
                 List<String> listaPiatti = new LinkedList<>();
 
@@ -157,6 +252,7 @@ public class HomeFragment extends Fragment {
                     idPiatto=jsonObject.getInt("Id");
                     nome=jsonObject.getString("Nome");
                     mensaParam=jsonObject.getString("Mensa");
+
                     dataPiatto=jsonObject.getString("DataPiatto");
                     tipoPiatto=jsonObject.getString("TipoPiatto");
                     idPasto=jsonObject.getInt("Pasto");
@@ -242,7 +338,12 @@ public class HomeFragment extends Fragment {
 
                                 mialista.setAdapter(null);
 
-                                TestImmagineAdapter  adapterOrdinati = new TestImmagineAdapter(getActivity(), R.layout.preview_piatto, UserSession.getPiattiOrdinati());
+                                TestImmagineAdapter  adapterOrdinati = new TestImmagineAdapter(getActivity(), R.layout.preview_piatto, UserSession.getPiattiOrdinati()){
+                                    @Override
+                                    public boolean isEnabled(int position) {
+                                        return false;
+                                    }
+                                };
 
 
                                 mialista.setAdapter(adapterOrdinati);
@@ -253,10 +354,11 @@ public class HomeFragment extends Fragment {
                                     @Override
                                     public void onClick(View v) {
                                         try {
-
                                             JSONObject objectOrdinati= new JSONObject();
                                             objectOrdinati.put("codicefiscale", UserSession.getUserID());
                                             objectOrdinati.put("sessionid", UserSession.getSessionID());
+                                            progressBarView.setVisibility(View.VISIBLE);
+
 
                                             new GetPastiOrdinati(objectOrdinati.toString()).execute(new HttpCalls());
                                         }catch (JSONException ex){
@@ -323,7 +425,12 @@ public class HomeFragment extends Fragment {
                             }else{
                                 mialista.setAdapter(null);
 
-                                TestImmagineAdapter  adapterOrdinati = new TestImmagineAdapter(getActivity(), R.layout.preview_piatto, UserSession.getPiattiOrdinati());
+                                TestImmagineAdapter  adapterOrdinati = new TestImmagineAdapter(getActivity(), R.layout.preview_piatto, UserSession.getPiattiOrdinati()){
+                                    @Override
+                                    public boolean isEnabled(int position) {
+                                        return false;
+                                    }
+                                };
 
 
                                 mialista.setAdapter(adapterOrdinati);
@@ -338,6 +445,7 @@ public class HomeFragment extends Fragment {
                                             JSONObject objectOrdinati= new JSONObject();
                                             objectOrdinati.put("codicefiscale", UserSession.getUserID());
                                             objectOrdinati.put("sessionid", UserSession.getSessionID());
+                                            progressBarView.setVisibility(View.VISIBLE);
 
                                             new GetPastiOrdinati(objectOrdinati.toString()).execute(new HttpCalls());
                                         }catch (JSONException ex){
@@ -358,7 +466,6 @@ public class HomeFragment extends Fragment {
 
 
                 });
-
             } catch (JSONException e){
                 e.printStackTrace();
             }
@@ -390,14 +497,11 @@ public class HomeFragment extends Fragment {
             mialista.setAdapter(null);
             mensa.setSelection(0);
             pasto.setSelection(0);
-            if(output.equals("Prenotazione Aggiunta")){
-    Toast.makeText(getActivity(), "Il tuo pasto a mensa è prenotato!", Toast.LENGTH_SHORT).show();
+            progressBarView.setVisibility(View.INVISIBLE);
 
-}
-else{
+
     Toast.makeText(getActivity(), output, Toast.LENGTH_LONG).show();
-return;
-}
+
         }
     }
 
@@ -413,6 +517,7 @@ return;
         @Override
         protected void onPostExecute(String output) {
             try {
+                progressBarView.setVisibility(View.INVISIBLE);
                 JSONArray jsonArray = new JSONArray(output);
                 if(jsonArray.getJSONObject(0).has("error")){
                     Toast.makeText(getActivity(),jsonArray.getJSONObject(0).getString("error"), Toast.LENGTH_SHORT).show();
@@ -480,13 +585,118 @@ int posti;
         @Override
         protected void onPostExecute(String output) {
             try {
-                JSONArray jsonArray;
-                JSONObject objApp;
 
-                if(output.equals("")){
-                    jsonArray = new JSONArray();
-                }else {
-                     jsonArray = new JSONArray(output);
+                progressBarView.setVisibility(View.INVISIBLE);
+                JSONArray jsonArray;
+
+
+                JSONObject objApp;
+                jsonArray = new JSONArray(output);
+if(jsonArray.length()==0){
+
+    Date date;
+    DateFormat dateFormat;
+    dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ITALY);
+     date = new Date();
+    JSONArray pastiArray= jsonArray;
+
+    JSONObject paramsPrenota = new JSONObject();
+    paramsPrenota.put("codicefiscale", UserSession.getUserID());
+    JSONObject objectPasto = new JSONObject();
+
+    objectPasto.put("idpasto",UserSession.getPiattiOrdinati().get(0).getIdPasto());
+    StringBuilder idpiatti= new StringBuilder();
+    for(int i=0; i<UserSession.getPiattiOrdinati().size(); i++) {
+        if(i==UserSession.getPiattiOrdinati().size()-1)
+            idpiatti.append(UserSession.getPiattiOrdinati().get(i).getId());
+        else
+            idpiatti.append(UserSession.getPiattiOrdinati().get(i).getId()+"-");
+
+
+    }
+    objectPasto.put("idpiatti",idpiatti.toString());
+
+    String dataPrenotazione=  dateFormat.format(date);
+    paramsPrenota.put("sessionid", UserSession.getSessionID());
+
+    objectPasto.put("dataprenotazione", dataPrenotazione);
+    objectPasto.put("mensa", UserSession.getPiattiOrdinati().get(0).getMensa());
+    objectPasto.put("tipopasto", UserSession.getPiattiOrdinati().get(0).getTipoPasto());
+    pastiArray.put(objectPasto);
+    paramsPrenota.put("pasti", pastiArray.toString() );
+//secondo controllo per chi non si prenota due ore prima dell'apertura della mensa
+
+    if( UserSession.getPiattiOrdinati().get(0).getTipoPasto().equals("pranzo")){
+
+        dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ITALY);
+        date = new Date();
+        String oraPrenotazione=  dateFormat.format(date).split(" ")[1];
+        String aperturaPranzo="";
+        for(Mensa m: menseList) {
+            if (m.getIndirizzo().equals(UserSession.getPiattiOrdinati().get(0).getMensa())) {
+                aperturaPranzo = m.getOrarioAperturaPranzo();
+                break;
+            }
+        }
+        SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss", Locale.ITALY);
+
+        java.util.Date d1 =(java.util.Date)format.parse(oraPrenotazione);
+        java.util.Date d2 =(java.util.Date)format.parse(aperturaPranzo);
+        Date newDate = new Date(d1.getTime() + TimeUnit.HOURS.toMillis(2)); // Adds 2 hours
+
+        if(newDate.after(d2)
+                ){
+
+            Toast.makeText(getActivity(),"Non sei più in tempo per prenotarti oggi a pranzo!", Toast.LENGTH_LONG).show();
+            buttonPrenota.setVisibility(View.INVISIBLE);
+
+            bottoneRicerca.setVisibility(View.VISIBLE);
+            mialista.setAdapter(null);
+            mensa.setSelection(0);
+            pasto.setSelection(0);
+            return;
+
+        }
+
+    }else{
+
+        dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss", Locale.ITALY);
+        date = new Date();
+        String oraPrenotazione=  dateFormat.format(date).split(" ")[1];
+        String aperturaCena="";
+        for(Mensa m: menseList) {
+            if (m.getIndirizzo().equals(UserSession.getPiattiOrdinati().get(0).getMensa())) {
+                aperturaCena = m.getOrarioAperturaCena();
+                break;
+            }
+        }
+        SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss", Locale.ITALY);
+
+        java.util.Date d1 =(java.util.Date)format.parse(oraPrenotazione);
+        java.util.Date d2 =(java.util.Date)format.parse(aperturaCena);
+        Date newDate = new Date(d1.getTime() + TimeUnit.HOURS.toMillis(2)); // Adds 2 hours
+
+        if(newDate.after(d2)
+                ){
+
+            Toast.makeText(getActivity(),"Non sei più in tempo per prenotarti oggi a cena!", Toast.LENGTH_LONG).show();
+            buttonPrenota.setVisibility(View.INVISIBLE);
+
+            bottoneRicerca.setVisibility(View.VISIBLE);
+            mialista.setAdapter(null);
+            mensa.setSelection(0);
+            pasto.setSelection(0);
+            return;
+
+        }
+
+    }
+
+    progressBarView.setVisibility(View.VISIBLE);
+
+    new AddPrenotazione(paramsPrenota).execute(new HttpCalls());
+    return;
+}
                     if(jsonArray.getJSONObject(0).has("error")){
                         Toast.makeText(getActivity(),jsonArray.getJSONObject(0).getString("error"), Toast.LENGTH_SHORT).show();
                         return;
@@ -503,7 +713,7 @@ int posti;
                             jsonArray.remove(i);
                         }
                     }
-                }
+
 
 //primo controllo per chi prenota piu volte lo stesso tipo di pasto lo stesso giorno
 for(int i=0; i<jsonArray.length();i++){
@@ -546,7 +756,7 @@ if( UserSession.getPiattiOrdinati().get(0).getTipoPasto().equals("pranzo")){
             break;
         }
     }
-        SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
+        SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss", Locale.ITALY);
 
         java.util.Date d1 =(java.util.Date)format.parse(oraPrenotazione);
         java.util.Date d2 =(java.util.Date)format.parse(aperturaPranzo);
@@ -578,7 +788,7 @@ if( UserSession.getPiattiOrdinati().get(0).getTipoPasto().equals("pranzo")){
             break;
         }
     }
-    SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss");
+    SimpleDateFormat format = new SimpleDateFormat("HH:mm:ss", Locale.ITALY);
 
     java.util.Date d1 =(java.util.Date)format.parse(oraPrenotazione);
     java.util.Date d2 =(java.util.Date)format.parse(aperturaCena);
@@ -627,6 +837,7 @@ if( UserSession.getPiattiOrdinati().get(0).getTipoPasto().equals("pranzo")){
                     pastiArray.put(objectPasto);
                     paramsPrenota.put("pasti", pastiArray.toString() );
 
+                progressBarView.setVisibility(View.VISIBLE);
 
                     new AddPrenotazione(paramsPrenota).execute(new HttpCalls());
                 }catch (JSONException ex){

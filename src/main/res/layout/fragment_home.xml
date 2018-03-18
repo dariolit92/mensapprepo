@@ -6,6 +6,7 @@
     android:orientation="vertical"
     android:paddingTop="@dimen/activity_vertical_margin"
     android:weightSum="1">
+
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="37dp"
@@ -39,19 +40,28 @@
 
     </LinearLayout>
 
-
+    <ProgressBar
+        android:id="@+id/progressBar"
+        android:layout_width="30dp"
+        android:layout_height="30dp"
+        android:layout_marginBottom="5dp"
+        android:layout_marginTop="5dp"
+        android:layout_gravity="center"
+        android:indeterminateTint="@android:color/holo_red_dark"/>
 
         <ListView
             android:id="@+id/listView1"
             android:layout_width="match_parent"
-            android:layout_height="384dp"
+            android:layout_height="329dp"
             android:divider="@android:color/holo_red_dark"
             android:dividerHeight="1dp"
-            android:scrollbarStyle="outsideInset" />
+            android:scrollbarStyle="outsideInset"
+         />
 
     <RelativeLayout
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+       >
 
 
         <ImageButton

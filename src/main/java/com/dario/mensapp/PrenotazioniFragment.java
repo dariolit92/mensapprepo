@@ -17,6 +17,7 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -39,13 +40,16 @@ import java.util.concurrent.TimeUnit;
 public class PrenotazioniFragment extends Fragment {
     public List<Mensa> listaMense;
     public static ListView mialista;
+    public ProgressBar progressBarView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_prenotazioni, container, false);
         mialista = (ListView) rootView.findViewById(R.id.listViewPrenotazioni);
+        progressBarView = (ProgressBar) rootView.findViewById(R.id.progressBar);
 
+        progressBarView.setVisibility(View.INVISIBLE);
 
         listaMense = new LinkedList<Mensa>();
         try {
@@ -53,6 +57,8 @@ public class PrenotazioniFragment extends Fragment {
             JSONObject objectOrdinati = new JSONObject();
             objectOrdinati.put("codicefiscale", UserSession.getUserID());
             objectOrdinati.put("sessionid", UserSession.getSessionID());
+            progressBarView.setVisibility(View.VISIBLE);
+
 
             new GetPastiOrdinati(objectOrdinati.toString()).execute(new HttpCalls());
         } catch (JSONException ex) {
@@ -80,12 +86,13 @@ public class PrenotazioniFragment extends Fragment {
         @Override
         protected void onPostExecute(final String output) {
             try {
+
                 mialista.setAdapter(null);
                 JSONArray jsonArray;
                 JSONObject objApp;
                 List<Prenotazione> listaPrenotazioni = new LinkedList<>();
 
-                if (output.equals("")) {
+                if (output.equals("[]")) {
                     jsonArray = new JSONArray();
                 } else {
 
@@ -138,6 +145,7 @@ public class PrenotazioniFragment extends Fragment {
                 final PrenotazioniAdapter adapter = new PrenotazioniAdapter
                         (getActivity(), R.layout.preview_prenotazione, listaPrenotazioni);
 
+                progressBarView.setVisibility(View.INVISIBLE);
 
                 mialista.setAdapter(adapter);
             } catch (JSONException ex) {

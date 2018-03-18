@@ -16,6 +16,7 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,15 +36,21 @@ import java.util.Locale;
 public class MensaFragment extends Fragment {
     public List<Mensa> listaMense;
     private ListView mialista;
+    public ProgressBar progressBarView;
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_mensa, container, false);
         mialista = (ListView) rootView.findViewById(R.id.listViewMensa);
+        progressBarView = (ProgressBar) rootView.findViewById(R.id.progressBar);
+        progressBarView.setVisibility(View.INVISIBLE);
+
 
 
         listaMense=new LinkedList<Mensa>();
+        progressBarView.setVisibility(View.VISIBLE);
+
         new GetMense().execute(new HttpCalls());
 
         return rootView;
@@ -64,6 +71,7 @@ public class MensaFragment extends Fragment {
         @Override
         protected void onPostExecute(String output) {
             try {
+                progressBarView.setVisibility(View.INVISIBLE);
 
                 JSONArray jsonArray = new JSONArray(output);
                 if(jsonArray.getJSONObject(0).has("error")){

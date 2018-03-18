@@ -70,7 +70,6 @@ public class PrenotazioniAdapter extends ArrayAdapter<Prenotazione> {
                     paramInput.put("codicefiscale", UserSession.getUserID());
                     paramInput.put("sessionid", UserSession.getSessionID());
                     paramInput.put("pasti",jsonArray.toString() );
-
                     new UpdatePrenotazioni(paramInput,prenotazione,listaPrenotazioni).execute(new HttpCalls());
                 }catch (JSONException ex){
                     ex.printStackTrace();

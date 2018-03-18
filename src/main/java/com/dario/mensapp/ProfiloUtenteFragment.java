@@ -16,6 +16,7 @@ import android.widget.ArrayAdapter;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ListView;
+import android.widget.ProgressBar;
 import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -35,16 +36,21 @@ import java.util.Locale;
 
 public class ProfiloUtenteFragment extends Fragment {
 public TextView infoView;
+    public ProgressBar progressBarView;
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         final View rootView = inflater.inflate(R.layout.fragment_utente, container, false);
         infoView = (TextView) rootView.findViewById(R.id.infoUtenteView);
-
+        progressBarView = (ProgressBar) rootView.findViewById(R.id.progressBar);
+        progressBarView.setVisibility(View.INVISIBLE);
         try {
             JSONObject objectInput = new JSONObject();
             objectInput.put("codicefiscale", UserSession.getUserID());
             objectInput.put("sessionid", UserSession.getSessionID());
+            progressBarView.setVisibility(View.VISIBLE);
+
             new GetUtente(objectInput.toString()).execute(new HttpCalls());
 
         }catch (JSONException ex){
@@ -74,6 +80,7 @@ public TextView infoView;
         @Override
         protected void onPostExecute(String output) {
             try {
+                progressBarView.setVisibility(View.INVISIBLE);
 
 
 
