@@ -1,7 +1,13 @@
 package com.dario.mensapp;
+import android.app.AlarmManager;
+import android.app.AlertDialog;
+import android.app.PendingIntent;
+import android.app.ProgressDialog;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.res.Configuration;
 import android.content.res.TypedArray;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.ActionBarDrawerToggle;
 import android.support.v4.app.Fragment;
@@ -12,18 +18,44 @@ import android.view.MenuItem;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ListView;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.dario.mensapp.navdrawer.NavDrawerItem;
 import com.dario.mensapp.navdrawer.NavDrawerListAdapter;
 
+import org.apache.http.NameValuePair;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.entity.UrlEncodedFormEntity;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.message.BasicNameValuePair;
+import org.json.JSONArray;
 import org.json.JSONException;
 import org.json.JSONObject;
 
+import java.io.BufferedReader;
+import java.io.BufferedWriter;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStream;
+import java.io.OutputStreamWriter;
 import java.io.Serializable;
+import java.net.HttpURLConnection;
+import java.net.URL;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
+import java.util.TimeZone;
+import java.util.concurrent.TimeUnit;
+
 import android.app.Activity;
 import android.content.BroadcastReceiver;
 import android.content.Context;
@@ -34,8 +66,10 @@ import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.Toast;
 
+import com.facebook.login.LoginManager;
 import com.google.android.gms.common.ConnectionResult;
 import com.google.android.gms.common.GooglePlayServicesUtil;
+import com.google.android.gms.gcm.GoogleCloudMessaging;
 
 
 public class HomeActivity extends FragmentActivity {
@@ -45,7 +79,6 @@ public class HomeActivity extends FragmentActivity {
     private boolean isHome = true;
     // nav drawer title
     private CharSequence mDrawerTitle;
-    private BroadcastReceiver mRegistrationBroadcastReceiver;
 
     // used to store app title
     private CharSequence mTitle;
@@ -57,7 +90,7 @@ public class HomeActivity extends FragmentActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
-
+        new GetMense().execute(new HttpCalls());
 
 
         mTitle = mDrawerTitle = getTitle();
@@ -121,40 +154,28 @@ public class HomeActivity extends FragmentActivity {
         }
 
 
-        mRegistrationBroadcastReceiver = new BroadcastReceiver() {
-            @Override
-            public void onReceive(Context context, Intent intent) {
-                //Check type of intent filter
-                if(intent.getAction().equals(GCMRegistrationIntentService.REGISTRATION_SUCCESS)){
-                    //Registration success
-                    String token = intent.getStringExtra("token");
-                    Toast.makeText(getApplicationContext(), "GCM token:" + token, Toast.LENGTH_LONG).show();
-                } else if(intent.getAction().equals(GCMRegistrationIntentService.REGISTRATION_ERROR)){
-                    //Registration error
-                    Toast.makeText(getApplicationContext(), "GCM registration error!!!", Toast.LENGTH_LONG).show();
-                } else {
-                    //Tobe define
-                }
-            }
-        };
-
-        //Check status of Google play service in device
-        int resultCode = GooglePlayServicesUtil.isGooglePlayServicesAvailable(getApplicationContext());
-        if(ConnectionResult.SUCCESS != resultCode) {
-            //Check type of error
-            if(GooglePlayServicesUtil.isUserRecoverableError(resultCode)) {
-                Toast.makeText(getApplicationContext(), "Google Play Service is not install/enabled in this device!", Toast.LENGTH_LONG).show();
-                //So notification
-                GooglePlayServicesUtil.showErrorNotification(resultCode, getApplicationContext());
-            } else {
-                Toast.makeText(getApplicationContext(), "This device does not support for Google Play Service!", Toast.LENGTH_LONG).show();
-            }
-        } else {
-            //Start service
-            Intent itent = new Intent(this, GCMRegistrationIntentService.class);
-            startService(itent);
-        }
     }
+
+
+    private void setRecurringAlarm(Context context) {
+
+        Calendar updateTime = Calendar.getInstance();
+        updateTime.setTimeZone(TimeZone.getDefault());
+        updateTime.set(Calendar.HOUR_OF_DAY, 12);
+        updateTime.set(Calendar.MINUTE, 30);
+        Intent downloader = new Intent(context, MyStartServiceReceiver.class);
+        downloader.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, 0, downloader, PendingIntent.FLAG_CANCEL_CURRENT);
+
+        AlarmManager alarmManager = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
+
+        alarmManager.setRepeating(AlarmManager.RTC_WAKEUP, updateTime.getTimeInMillis(),alarmManager.INTERVAL_HOUR, pendingIntent);
+
+        Log.d("MyActivity", "Set alarmManager.setRepeating to: " + updateTime.getTime().toLocaleString());
+
+    }
+
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
@@ -165,20 +186,7 @@ public class HomeActivity extends FragmentActivity {
         // Handle action bar actions click
         return super.onOptionsItemSelected(item);
     }
-    @Override
-    protected void onResume() {
-        super.onResume();
-        LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
-                new IntentFilter(GCMRegistrationIntentService.REGISTRATION_SUCCESS));
-        LocalBroadcastManager.getInstance(this).registerReceiver(mRegistrationBroadcastReceiver,
-                new IntentFilter(GCMRegistrationIntentService.REGISTRATION_ERROR));
-    }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-        LocalBroadcastManager.getInstance(this).unregisterReceiver(mRegistrationBroadcastReceiver);
-    }
 
     /**
      * Diplaying fragment view for selected nav drawer list item
@@ -277,21 +285,65 @@ public class HomeActivity extends FragmentActivity {
 
     private void logout() {
         mDrawerLayout.closeDrawer(mDrawerList);
-        try{
-        Intent wait = new Intent(this, SendInfoActivity.class);
+        LoginManager.getInstance().logOut();
+
+        try {
+            Intent wait = new Intent(this, SendInfoActivity.class);
 
 
-        JSONObject params = new JSONObject();
-        params.put("codicefiscale", UserSession.getUserID());
+            JSONObject params = new JSONObject();
+            params.put("codicefiscale", UserSession.getUserID());
 
-        wait.putExtra("query", "logout.php");
-        wait.putExtra("params",  params.toString());
-        startActivity(wait);
-    }catch (JSONException e){
-        e.printStackTrace();
+            wait.putExtra("query", "logout.php");
+            wait.putExtra("params", params.toString());
+
+            startActivity(wait);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
     }
+
+
+    private class GetMense extends AsyncTask<HttpCalls, Long, String> {
+        @Override
+        protected String doInBackground(HttpCalls... params) {
+
+            return params[0].getData(HttpCalls.DOMAIN + "/getMense.php");
+
+
+        }
+
+        @Override
+        protected void onPostExecute(String output) {
+
+
+            try {
+                JSONArray jsonArray = new JSONArray(output);
+                List<Mensa> lista = new LinkedList<>();
+
+                for (int i = 0; i < jsonArray.length(); i++) {
+                    JSONObject jsonObject = jsonArray.getJSONObject(i);
+                    String aperturaPranzo = jsonObject.getString("OrarioAperturaPranzo");
+                    String aperturaCena = jsonObject.getString("OrarioAperturaCena");
+                    String indirizzo = jsonObject.getString("Indirizzo");
+                    String citta = jsonObject.getString("Citta");
+
+                    String chiusuraPranzo = jsonObject.getString("OrarioChiusuraPranzo");
+                    String chiusuraCena = jsonObject.getString("OrarioChiusuraCena");
+                    int posti = jsonObject.getInt("NumeroPosti");
+                    Mensa mensa = new Mensa(indirizzo, citta, posti, aperturaCena, aperturaPranzo, chiusuraCena, chiusuraPranzo);
+                    lista.add(mensa);
+
+                }
+                UserSession.setListaMense(lista);
+                setRecurringAlarm(getApplicationContext());
+
+
+            } catch (JSONException ex) {
+                ex.printStackTrace();
+
+            }
+        }
+
     }
-
-
-
 }

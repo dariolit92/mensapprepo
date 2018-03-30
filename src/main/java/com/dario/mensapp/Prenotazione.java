@@ -1,10 +1,12 @@
 package com.dario.mensapp;
 
+import java.io.Serializable;
+
 /**
  * Created by Dario on 03/03/2018.
  */
 
-public class Prenotazione {
+public class Prenotazione implements Serializable {
     private  int idPasto;
 
     private String dataprenotazione;

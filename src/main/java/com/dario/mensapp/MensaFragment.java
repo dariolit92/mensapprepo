@@ -101,7 +101,6 @@ String orarioAperturaCena;
 
                         orarioChiusuraCena= jsonObject.getString("OrarioChiusuraCena");
 
-
                         orarioChiusuraPranzo= jsonObject.getString("OrarioChiusuraPranzo");
 
                         numeroPosti= jsonObject.getInt("NumeroPosti");

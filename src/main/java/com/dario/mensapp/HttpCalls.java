@@ -13,8 +13,11 @@ import java.net.*;
 import org.json.JSONObject;
 
 
-public final class HttpCalls {
-    public static final String CONNECTION_FAILED = "Errore di connessione al server";
+public  class HttpCalls {
+    public HttpCalls() {
+    }
+
+    public  static String CONNECTION_FAILED = "Errore di connessione al server";
     public static String DOMAIN = "https://unretarded-midwatch.000webhostapp.com";
 
     public String getData(String urlHttp){

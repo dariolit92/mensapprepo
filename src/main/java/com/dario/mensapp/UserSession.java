@@ -26,7 +26,8 @@ public final class UserSession {
     private static String codiceFiscaleUtente;
     private static String sessionID;
     private static int counter;
-
+private static List<Prenotazione> listaPrenotazioni;
+    private static List<Mensa> listaMense;
     /*
      * Costruttore privato così può essere invocato solo tramite il metodo setSession
      * che, per costruzione, può creare una sola sessione per volta.
@@ -34,6 +35,22 @@ public final class UserSession {
     private UserSession(String user, String session) {
         codiceFiscaleUtente = user;
         sessionID = session;
+    }
+
+    public static List<Mensa> getListaMense() {
+        return listaMense;
+    }
+
+    public static void setListaMense(List<Mensa> listaMense) {
+        UserSession.listaMense = listaMense;
+    }
+
+    public static List<Prenotazione> getListaPrenotazioni() {
+        return listaPrenotazioni;
+    }
+
+    public static void setListaPrenotazioni(List<Prenotazione> listaPrenotazioni) {
+        UserSession.listaPrenotazioni = listaPrenotazioni;
     }
 
     public static int getCounter() {

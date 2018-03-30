@@ -1,9 +1,11 @@
 package com.dario.mensapp;
 
         import android.app.Activity;
+        import android.app.AlertDialog;
         import android.app.Application;
         import android.app.ProgressDialog;
         import android.content.Context;
+        import android.content.DialogInterface;
         import android.content.Intent;
         import android.content.pm.PackageInfo;
         import android.content.pm.PackageManager;
@@ -15,6 +17,9 @@ package com.dario.mensapp;
         import android.view.View;
         import android.widget.ImageButton;
         import android.widget.Toast;
+
+        import com.facebook.AccessToken;
+        import com.facebook.AccessTokenTracker;
         import com.facebook.CallbackManager;
  ;
         import com.facebook.FacebookException;
@@ -29,6 +34,8 @@ package com.dario.mensapp;
         import com.facebook.FacebookSdk;
         import com.facebook.GraphRequest;
         import com.facebook.GraphResponse;
+        import com.facebook.Profile;
+        import com.facebook.login.LoginManager;
         import com.facebook.login.LoginResult;
         import com.facebook.login.widget.LoginButton;
 
@@ -55,7 +62,7 @@ import com.facebook.login.widget.LoginButton;
         import java.util.concurrent.ExecutionException;
 public class MainActivity extends Activity {
     private CallbackManager callbackManager;
-    private  com.facebook.login.widget.LoginButton fbLoginButton;
+    private   LoginButton fbLoginButton;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {

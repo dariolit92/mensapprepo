@@ -5,10 +5,13 @@
     <uses-permission android:name="android.permission.INTERNET" />
     <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
     <uses-permission android:name="android.permission.WAKE_LOCK" />
+    <uses-permission android:name="com.google.android.c2dm.permission.RECEIVE" />
+
     <permission
-        android:name="com.dario.mensapp.permission.C2D_MESSAGE"
+        android:name="it.html.googleservices.push.permission.C2D_MESSAGE"
         android:protectionLevel="signature" />
-    <uses-permission android:name="com.dario.mensapp.permission.C2D_MESSAGE" />
+
+    <uses-permission android:name="it.html.googleservices.push.permission.C2D_MESSAGE" />
 
     <application
         android:allowBackup="true"
@@ -18,37 +21,23 @@
         android:theme="@style/MensAppTheme">
         <activity
             android:name=".MainActivity"
-            android:screenOrientation="portrait"
-            android:noHistory="true" >
-
+            android:noHistory="true"
+            android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
                 <category android:name="android.intent.category.LAUNCHER" />
             </intent-filter>
         </activity>
-        <receiver
-            android:name="com.google.android.gms.gcm.GcmReceiver"
-            android:exported="true"
-            android:permission="com.google.android.c2dm.permission.SEND">
-            <intent-filter>
-                <action android:name="com.google.android.c2dm.intent.RECEIVE"/>
-                <category android:name="com.dario.mensapp"/>
-            </intent-filter>
-        </receiver>
-        <service android:name=".GCMPushReceiverService" android:exported="false">
-            <intent-filter>
-                <action android:name="com.google.android.c2dm.intent.RECEIVE"/>
-            </intent-filter>
-        </service>
-        <service android:name=".GCMRegistrationIntentService" android:exported="false">
-            <intent-filter>
-                <action android:name="com.google.android.gms.iid.InstanceID"/>
-            </intent-filter>
-        </service>
+
         <meta-data
             android:name="com.facebook.sdk.ApplicationId"
             android:value="@string/facebook_app_id" />
+        <meta-data
+            android:name="com.google.android.gms.version"
+            android:value="@integer/google_play_services_version" />
+        <service android:name="MyService" ></service>
+        <receiver android:name="MyStartServiceReceiver" ></receiver>
 
         <activity
             android:name=".SendInfoActivity"
@@ -57,16 +46,17 @@
         <activity
             android:name=".RegisterActivity"
             android:screenOrientation="portrait" />
-
         <activity
             android:name=".HomeActivity"
             android:screenOrientation="portrait" />
-        <activity android:name=".LoginActivity"></activity>
-        <activity android:name="com.facebook.FacebookActivity"
+        <activity android:name=".LoginActivity" />
+        <activity
+            android:name="com.facebook.FacebookActivity"
             android:configChanges="keyboard|keyboardHidden|screenLayout|screenSize|orientation"
-            android:theme="@android:style/Theme.Translucent.NoTitleBar"
-            android:label="@string/app_name" />
-
+            android:label="@string/app_name"
+            android:theme="@android:style/Theme.Translucent.NoTitleBar" />
+        <activity android:name=".PastoPrenotatoActivity"
+            android:screenOrientation="portrait" />
     </application>
 
 </manifest>

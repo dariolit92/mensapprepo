@@ -90,7 +90,7 @@ public class PrenotazioniFragment extends Fragment {
                 mialista.setAdapter(null);
                 JSONArray jsonArray;
                 JSONObject objApp;
-                List<Prenotazione> listaPrenotazioni = new LinkedList<>();
+                final List<Prenotazione> listaPrenotazioni = new LinkedList<>();
 
                 if (output.equals("[]")) {
                     jsonArray = new JSONArray();
@@ -98,8 +98,8 @@ public class PrenotazioniFragment extends Fragment {
 
                     JSONArray array = new JSONArray(output);
 
-                    if(array.getJSONObject(0).has("error") ){
-                        Toast.makeText(getActivity(),array.getJSONObject(0).getString("error"), Toast.LENGTH_SHORT).show();
+                    if (array.getJSONObject(0).has("error")) {
+                        Toast.makeText(getActivity(), array.getJSONObject(0).getString("error"), Toast.LENGTH_SHORT).show();
                         return;
                     }
 
@@ -144,15 +144,33 @@ public class PrenotazioniFragment extends Fragment {
                 }
                 final PrenotazioniAdapter adapter = new PrenotazioniAdapter
                         (getActivity(), R.layout.preview_prenotazione, listaPrenotazioni);
+                mialista.setAdapter(adapter);
 
                 progressBarView.setVisibility(View.INVISIBLE);
 
-                mialista.setAdapter(adapter);
+                AdapterView.OnItemClickListener clickListener = new AdapterView.OnItemClickListener() {
+
+                    @Override
+                    public void onItemClick(AdapterView<?> adapter, View view,
+                                            int position, long id) {
+                        Prenotazione p = (Prenotazione) adapter.getItemAtPosition(position);
+UserSession.setListaPrenotazioni(listaPrenotazioni);
+                        Intent intent = new Intent();
+                        intent.setClass(getActivity(), PastoPrenotatoActivity.class);
+
+                        Bundle bundle = new Bundle();
+                        bundle.putSerializable("prenotazione", p);
+                        intent.putExtras(bundle);
+                        startActivity(intent);
+                    }
+                };
+                mialista.setOnItemClickListener(clickListener);
+
             } catch (JSONException ex) {
                 ex.printStackTrace();
             }
+
+
         }
-
-
     }
 }
